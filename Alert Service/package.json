@@ -1,5 +1,5 @@
 {
-  "name": "query-service",
+  "name": "alert-service",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,11 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@vendia/serverless-express": "^4.12.6",
-    "bcrypt": "^6.0.0",
-    "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "nodemon": "^3.1.14",
     "pg": "^8.20.0"
   }
 }

@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Expense Tracker Backend Services
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 30
+    Environment:
+      Variables:
+        DB_HOST: aeronode-rds-server.cf28seae0k2m.ap-south-1.rds.amazonaws.com
+        DB_PORT: '5432'
+        DB_USER: postgres
+        DB_PASSWORD: Admin$1234
+        DB_NAME: Expense-Tracker-DB
+        JWT_SECRET: HiiBabe
+Resources:
+  ExpenseTrackerApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: ExpenseTrackerApi
+      StageName: prod
+      Description: Single API Gateway that routes to all backend services
+      Cors:
+        AllowMethods: '''*'''
+        AllowHeaders: '''Content-Type,Authorization,X-Amz-Date,X-Api-Key'''
+        AllowOrigin: '''*'''
+  QueryServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: QueryServiceFunction
+      Handler: index.handler
+      Description: Lambda function for the Query Service
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ExpenseTrackerApi
+            Path: /query/{proxy+}
+            Method: ANY
+    Metadata:
+      SamResourceId: QueryServiceFunction
+  AlertServiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: AlertServiceFunction
+      Handler: index.handler
+      Description: Lambda function for the Alert Service
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ExpenseTrackerApi
+            Path: /alert/{proxy+}
+            Method: ANY
+    Metadata:
+      SamResourceId: AlertServiceFunction
+Outputs:
+  ApiUrl:
+    Description: Base URL of the Expense Tracker API
+    Value:
+      Fn::Sub: https://${ExpenseTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/prod
