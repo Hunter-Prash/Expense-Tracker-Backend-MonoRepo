@@ -1,10 +1,12 @@
 import express from "express"
 import serverlessExpress from "@vendia/serverless-express"
+import cors from "cors"
 import userRoute from './routes/authRoute.js'
 import categoryRoute from './routes/categoryRoute.js'
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
 

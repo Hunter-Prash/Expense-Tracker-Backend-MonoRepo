@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@source "../src/**/*.tsx";
+
+@theme {
+  --color-primary: #6366f1;
+  --color-primary-light: #818cf8;
+  --color-primary-dark: #4f46e5;
+  --color-accent: #a78bfa;
+  --color-surface: #1e1b2e;
+  --color-surface-light: #2a2640;
+  --color-surface-lighter: #3b3558;
+  --color-bg: #0f0d1a;
+  --color-text: #e2e0f0;
+  --color-text-muted: #9b97b0;
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+@utility glass {
+  background-color: var(--color-surface);
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-width: 1px;
+  border-color: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-bg text-text min-h-dvh antialiased;
+  }
+}
+
+/* Custom scrollbar via Tailwind variants */
+@layer utilities {
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-custom::-webkit-scrollbar-track {
+    @apply bg-surface;
+  }
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-surface-lighter rounded-full;
+  }
+}
