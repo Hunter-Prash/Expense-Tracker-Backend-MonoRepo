@@ -10,7 +10,7 @@ router.post('/login', loginUser);
 
 // ─── Protected routes (token required) ─────────────────────────────
 router.get('/user', authenticate, getUser);
-router.put('/user', authenticate, updateUser);
+router.patch('/user', authenticate, updateUser);
 router.delete('/user', authenticate, deleteUser);
 
 export default router;
