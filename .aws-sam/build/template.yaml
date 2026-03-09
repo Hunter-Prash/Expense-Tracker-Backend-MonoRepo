@@ -7,11 +7,7 @@ Globals:
     Timeout: 30
     Environment:
       Variables:
-        DB_HOST: aeronode-rds-server.cf28seae0k2m.ap-south-1.rds.amazonaws.com
-        DB_PORT: '5432'
-        DB_USER: postgres
-        DB_PASSWORD: Admin$1234
-        DB_NAME: Expense-Tracker-DB
+        TABLE_NAME: Expense-Tracker-Table
         JWT_SECRET: HiiBabe
 Resources:
   ExpenseTrackerApi:
@@ -30,6 +26,9 @@ Resources:
       CodeUri: QueryServiceFunction
       Handler: index.handler
       Description: Lambda function for the Query Service
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: Expense-Tracker-Table
       Events:
         ApiEvent:
           Type: Api
@@ -46,6 +45,9 @@ Resources:
       CodeUri: AlertServiceFunction
       Handler: index.handler
       Description: Lambda function for the Alert Service
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: Expense-Tracker-Table
       Events:
         ApiEvent:
           Type: Api

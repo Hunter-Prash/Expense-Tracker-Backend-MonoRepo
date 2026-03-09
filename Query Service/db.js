@@ -1,24 +1,9 @@
-import { Pool } from "pg";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 
-const pool = new Pool({
-    host: process.env.DB_HOST || 'aeronode-rds-server.cf28seae0k2m.ap-south-1.rds.amazonaws.com',
-    port: process.env.DB_PORT || 5432,
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'Admin$1234',
-    database: process.env.DB_NAME || 'Expense-Tracker-DB',
-    ssl: { rejectUnauthorized: false },
-    max: 3
-});
+const client = new DynamoDBClient({ region: process.env.AWS_REGION || 'ap-south-1' });
+const docClient = DynamoDBDocumentClient.from(client);
 
-export const query = async (text, params = []) => {
-    try {
-        const res = await pool.query(text, params);
-        return res;
-    } catch (err) {
-        console.error("❌ Database Query Failed");
-        console.error("Query:", text);
-        console.error("Params:", params);
-        console.error("Error:", err);
-        throw err;
-    }
-};
+const TABLE_NAME = process.env.TABLE_NAME || 'Expense-Tracker-Table';
+
+export { docClient, TABLE_NAME, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand };

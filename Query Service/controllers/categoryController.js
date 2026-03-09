@@ -1,4 +1,5 @@
-import { query } from '../db.js';
+import crypto from 'crypto';
+import { docClient, TABLE_NAME, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
 
 // ─── Create a category ────────────────────────────────────────────
 export const createCategory = async (req, res) => {
@@ -14,11 +15,25 @@ export const createCategory = async (req, res) => {
             return res.status(400).json({ error: 'type must be either "income" or "expense"' });
         }
 
-        const result = await query(
-            `INSERT INTO categories (user_id, name, type) VALUES (${userId}, '${name}', '${type}') RETURNING *`
-        );
+        const categoryId = crypto.randomUUID();
+        const now = new Date().toISOString();
 
-        return res.status(201).json({ message: 'Category created', category: result.rows[0] });
+        const item = {
+            pk: `USER#${userId}`,
+            sk: `CAT#${categoryId}`,
+            id: categoryId,
+            user_id: userId,
+            name,
+            type,
+            created_at: now
+        };
+
+        await docClient.send(new PutCommand({
+            TableName: TABLE_NAME,
+            Item: item
+        }));
+
+        return res.status(201).json({ message: 'Category created', category: item });
     } catch (err) {
         console.error('createCategory error:', err);
         return res.status(500).json({ error: 'Internal server error' });
@@ -30,11 +45,16 @@ export const getCategories = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const result = await query(
-            `SELECT * FROM categories WHERE user_id = ${userId} ORDER BY created_at DESC`
-        );
+        const result = await docClient.send(new QueryCommand({
+            TableName: TABLE_NAME,
+            KeyConditionExpression: 'pk = :pk AND begins_with(sk, :prefix)',
+            ExpressionAttributeValues: {
+                ':pk': `USER#${userId}`,
+                ':prefix': 'CAT#'
+            }
+        }));
 
-        return res.status(200).json({ categories: result.rows });
+        return res.status(200).json({ categories: result.Items || [] });
     } catch (err) {
         console.error('getCategories error:', err);
         return res.status(500).json({ error: 'Internal server error' });
@@ -47,15 +67,16 @@ export const getCategoryById = async (req, res) => {
         const userId = req.user.id;
         const { id } = req.params;
 
-        const result = await query(
-            `SELECT * FROM categories WHERE id = ${id} AND user_id = ${userId}`
-        );
+        const result = await docClient.send(new GetCommand({
+            TableName: TABLE_NAME,
+            Key: { pk: `USER#${userId}`, sk: `CAT#${id}` }
+        }));
 
-        if (result.rows.length === 0) {
+        if (!result.Item) {
             return res.status(404).json({ error: 'Category not found' });
         }
 
-        return res.status(200).json({ category: result.rows[0] });
+        return res.status(200).json({ category: result.Item });
     } catch (err) {
         console.error('getCategoryById error:', err);
         return res.status(500).json({ error: 'Internal server error' });
@@ -77,23 +98,36 @@ export const updateCategory = async (req, res) => {
             return res.status(400).json({ error: 'type must be either "income" or "expense"' });
         }
 
-        const nameValue = name ? `'${name}'` : 'name';
-        const typeValue = type ? `'${type}'` : 'type';
+        const updates = [];
+        const exprNames = {};
+        const exprValues = {};
 
-        const result = await query(
-            `UPDATE categories
-             SET name = ${nameValue},
-                 type = ${typeValue}
-             WHERE id = ${id} AND user_id = ${userId}
-             RETURNING *`
-        );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Category not found' });
+        if (name) {
+            updates.push('#n = :name');
+            exprNames['#n'] = 'name';
+            exprValues[':name'] = name;
+        }
+        if (type) {
+            updates.push('#t = :type');
+            exprNames['#t'] = 'type';
+            exprValues[':type'] = type;
         }
 
-        return res.status(200).json({ message: 'Category updated', category: result.rows[0] });
+        const result = await docClient.send(new UpdateCommand({
+            TableName: TABLE_NAME,
+            Key: { pk: `USER#${userId}`, sk: `CAT#${id}` },
+            UpdateExpression: `SET ${updates.join(', ')}`,
+            ExpressionAttributeNames: exprNames,
+            ExpressionAttributeValues: exprValues,
+            ConditionExpression: 'attribute_exists(pk)',
+            ReturnValues: 'ALL_NEW'
+        }));
+
+        return res.status(200).json({ message: 'Category updated', category: result.Attributes });
     } catch (err) {
+        if (err.name === 'ConditionalCheckFailedException') {
+            return res.status(404).json({ error: 'Category not found' });
+        }
         console.error('updateCategory error:', err);
         return res.status(500).json({ error: 'Internal server error' });
     }
@@ -105,11 +139,13 @@ export const deleteCategory = async (req, res) => {
         const userId = req.user.id;
         const { id } = req.params;
 
-        const result = await query(
-            `DELETE FROM categories WHERE id = ${id} AND user_id = ${userId} RETURNING id`
-        );
+        const result = await docClient.send(new DeleteCommand({
+            TableName: TABLE_NAME,
+            Key: { pk: `USER#${userId}`, sk: `CAT#${id}` },
+            ReturnValues: 'ALL_OLD'
+        }));
 
-        if (result.rows.length === 0) {
+        if (!result.Attributes) {
             return res.status(404).json({ error: 'Category not found' });
         }
 
