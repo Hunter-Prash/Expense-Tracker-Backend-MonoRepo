@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from './AuthContext';
+import toast from 'react-hot-toast';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 
 const AuthPage = () => {
@@ -23,12 +24,16 @@ const AuthPage = () => {
     try {
       if (isLogin) {
         await login(email, password);
+        toast.success('Welcome back! 👋');
       } else {
         await register(name, email, password);
+        toast.success('Account created successfully! 🎉');
       }
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Something went wrong');
+      const msg = err.response?.data?.error || 'Something went wrong';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }

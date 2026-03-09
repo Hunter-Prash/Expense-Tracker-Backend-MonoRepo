@@ -15,8 +15,7 @@ export const createCategory = async (req, res) => {
         }
 
         const result = await query(
-            'INSERT INTO categories (user_id, name, type) VALUES ($1, $2, $3) RETURNING *',
-            [userId, name, type]
+            `INSERT INTO categories (user_id, name, type) VALUES (${userId}, '${name}', '${type}') RETURNING *`
         );
 
         return res.status(201).json({ message: 'Category created', category: result.rows[0] });
@@ -32,8 +31,7 @@ export const getCategories = async (req, res) => {
         const userId = req.user.id;
 
         const result = await query(
-            'SELECT * FROM categories WHERE user_id = $1 ORDER BY created_at DESC',
-            [userId]
+            `SELECT * FROM categories WHERE user_id = ${userId} ORDER BY created_at DESC`
         );
 
         return res.status(200).json({ categories: result.rows });
@@ -50,8 +48,7 @@ export const getCategoryById = async (req, res) => {
         const { id } = req.params;
 
         const result = await query(
-            'SELECT * FROM categories WHERE id = $1 AND user_id = $2',
-            [id, userId]
+            `SELECT * FROM categories WHERE id = ${id} AND user_id = ${userId}`
         );
 
         if (result.rows.length === 0) {
@@ -80,13 +77,15 @@ export const updateCategory = async (req, res) => {
             return res.status(400).json({ error: 'type must be either "income" or "expense"' });
         }
 
+        const nameValue = name ? `'${name}'` : 'name';
+        const typeValue = type ? `'${type}'` : 'type';
+
         const result = await query(
             `UPDATE categories
-             SET name = COALESCE($1, name),
-                 type = COALESCE($2, type)
-             WHERE id = $3 AND user_id = $4
-             RETURNING *`,
-            [name || null, type || null, id, userId]
+             SET name = ${nameValue},
+                 type = ${typeValue}
+             WHERE id = ${id} AND user_id = ${userId}
+             RETURNING *`
         );
 
         if (result.rows.length === 0) {
@@ -107,8 +106,7 @@ export const deleteCategory = async (req, res) => {
         const { id } = req.params;
 
         const result = await query(
-            'DELETE FROM categories WHERE id = $1 AND user_id = $2 RETURNING id',
-            [id, userId]
+            `DELETE FROM categories WHERE id = ${id} AND user_id = ${userId} RETURNING id`
         );
 
         if (result.rows.length === 0) {

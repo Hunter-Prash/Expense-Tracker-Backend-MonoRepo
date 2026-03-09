@@ -3,14 +3,41 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { LogOut, Wallet, TrendingUp, PieChart, Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Calendar, Tag, FileText, IndianRupee } from 'lucide-react';
 
 const API_BASE = 'https://14ozjattl0.execute-api.ap-south-1.amazonaws.com/Stage/query/api/v1';
+const ALERT_API_BASE = 'https://14ozjattl0.execute-api.ap-south-1.amazonaws.com/Stage/alert/api/v1';
 
 const Dashboard = () => {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
   const [showSettings, setShowSettings] = useState(false);
+
+  // Limit form state
+  const [dailyLimit, setDailyLimit] = useState('');
+  const [weeklyLimit, setWeeklyLimit] = useState('');
+  const [monthlyLimit, setMonthlyLimit] = useState('');
+  const [editingDaily, setEditingDaily] = useState(false);
+  const [editingWeekly, setEditingWeekly] = useState(false);
+  const [editingMonthly, setEditingMonthly] = useState(false);
+
+  const handleSetLimit = async (type: 'daily' | 'weekly' | 'monthly', value: string) => {
+    if (!value || isNaN(Number(value)) || Number(value) < 0) {
+      toast.error('Please enter a valid amount');
+      return;
+    }
+    try {
+      await axios.patch(
+        `${ALERT_API_BASE}/limits/${type}`,
+        { [`${type}_limit`]: parseFloat(value) },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} limit set to ₹${value}`);
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || `Failed to set ${type} limit`);
+    }
+  };
 
   // Transaction form state
   const [showTransactionForm, setShowTransactionForm] = useState(false);
@@ -25,6 +52,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     logout();
+    toast.success('Signed out successfully');
     navigate('/');
   };
 
@@ -60,23 +88,21 @@ const Dashboard = () => {
       );
 
       setTxnSuccess(true);
+      toast.success('Transaction added successfully! 🎉');
       setTimeout(() => {
         setShowTransactionForm(false);
         setTxnSuccess(false);
       }, 1500);
     } catch (err: any) {
-      setTxnError(err.response?.data?.error || 'Failed to add transaction');
+      const msg = err.response?.data?.error || 'Failed to add transaction';
+      setTxnError(msg);
+      toast.error(msg);
     } finally {
       setTxnSubmitting(false);
     }
   };
 
-  const quickStats = [
-    { icon: Wallet, label: 'Total Main Balance', value: '₹0.00', color: 'text-primary-light', bg: 'bg-primary/10' },
-    { icon: TrendingUp, label: 'Total Income', value: '₹0.00', color: 'text-success', bg: 'bg-success/10', trend: '+0%' },
-    { icon: ArrowDownRight, label: 'Total Expenses', value: '₹0.00', color: 'text-danger', bg: 'bg-danger/10', trend: '-0%' },
-    { icon: Bell, label: 'Active Alerts', value: '0', color: 'text-warning', bg: 'bg-warning/10' },
-  ];
+
 
   const glassStyle = "bg-surface/85 backdrop-blur-2xl border border-primary/25 shadow-[0_8px_32px_rgba(0,0,0,0.4)]";
 
@@ -179,14 +205,107 @@ const Dashboard = () => {
                       </button>
                     </div>
                     <div className="space-y-3">
-                      <button className="w-full flex flex-col items-start p-3 rounded-xl bg-surface/50 hover:bg-surface border border-transparent hover:border-surface-lighter transition-all cursor-pointer group">
-                        <span className="text-sm font-bold text-text group-hover:text-primary-light transition-colors">Set Daily Limit</span>
-                        <span className="text-xs text-text-muted mt-1 text-left">Warn when daily spending exceeds limit</span>
-                      </button>
-                      <button className="w-full flex flex-col items-start p-3 rounded-xl bg-surface/50 hover:bg-surface border border-transparent hover:border-surface-lighter transition-all cursor-pointer group">
-                        <span className="text-sm font-bold text-text group-hover:text-primary-light transition-colors">Set Monthly Limit</span>
-                        <span className="text-xs text-text-muted mt-1 text-left">Track against your monthly budget</span>
-                      </button>
+                      {/* Daily Limit */}
+                      <div className="p-3 rounded-xl bg-surface/50 border border-transparent hover:border-surface-lighter transition-all">
+                        <button onClick={() => setEditingDaily(!editingDaily)} className="w-full flex flex-col items-start cursor-pointer group">
+                          <span className="text-sm font-bold text-text group-hover:text-primary-light transition-colors">Set Daily Limit</span>
+                          <span className="text-xs text-text-muted mt-1 text-left">Warn when daily spending exceeds limit</span>
+                        </button>
+                        <AnimatePresence>
+                          {editingDaily && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex flex-col gap-2 mt-3">
+                                <input
+                                  type="number"
+                                  placeholder="e.g. 500"
+                                  value={dailyLimit}
+                                  onChange={(e) => setDailyLimit(e.target.value)}
+                                  className="w-full bg-surface border border-surface-lighter rounded-lg px-3 py-2 text-sm text-text placeholder-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                />
+                                <button
+                                  onClick={() => { handleSetLimit('daily', dailyLimit); setEditingDaily(false); }}
+                                  className="w-full bg-primary hover:bg-primary-light text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer"
+                                >
+                                  Set
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+
+                      {/* Weekly Limit */}
+                      <div className="p-3 rounded-xl bg-surface/50 border border-transparent hover:border-surface-lighter transition-all">
+                        <button onClick={() => setEditingWeekly(!editingWeekly)} className="w-full flex flex-col items-start cursor-pointer group">
+                          <span className="text-sm font-bold text-text group-hover:text-primary-light transition-colors">Set Weekly Limit</span>
+                          <span className="text-xs text-text-muted mt-1 text-left">Cap your weekly spending</span>
+                        </button>
+                        <AnimatePresence>
+                          {editingWeekly && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex flex-col gap-2 mt-3">
+                                <input
+                                  type="number"
+                                  placeholder="e.g. 3000"
+                                  value={weeklyLimit}
+                                  onChange={(e) => setWeeklyLimit(e.target.value)}
+                                  className="w-full bg-surface border border-surface-lighter rounded-lg px-3 py-2 text-sm text-text placeholder-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                />
+                                <button
+                                  onClick={() => { handleSetLimit('weekly', weeklyLimit); setEditingWeekly(false); }}
+                                  className="w-full bg-primary hover:bg-primary-light text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer"
+                                >
+                                  Set
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+
+                      {/* Monthly Limit */}
+                      <div className="p-3 rounded-xl bg-surface/50 border border-transparent hover:border-surface-lighter transition-all">
+                        <button onClick={() => setEditingMonthly(!editingMonthly)} className="w-full flex flex-col items-start cursor-pointer group">
+                          <span className="text-sm font-bold text-text group-hover:text-primary-light transition-colors">Set Monthly Limit</span>
+                          <span className="text-xs text-text-muted mt-1 text-left">Track against your monthly budget</span>
+                        </button>
+                        <AnimatePresence>
+                          {editingMonthly && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex flex-col gap-2 mt-3">
+                                <input
+                                  type="number"
+                                  placeholder="e.g. 15000"
+                                  value={monthlyLimit}
+                                  onChange={(e) => setMonthlyLimit(e.target.value)}
+                                  className="w-full bg-surface border border-surface-lighter rounded-lg px-3 py-2 text-sm text-text placeholder-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                />
+                                <button
+                                  onClick={() => { handleSetLimit('monthly', monthlyLimit); setEditingMonthly(false); }}
+                                  className="w-full bg-primary hover:bg-primary-light text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer"
+                                >
+                                  Set
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -232,48 +351,16 @@ const Dashboard = () => {
                   transition={{ delay: 0.4 }}
                 >
                   <button 
-                    onClick={() => openTransactionForm('income')}
+                    onClick={() => openTransactionForm('expense')}
                     className="w-full sm:w-auto bg-primary hover:bg-primary-light text-white px-5 sm:px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 cursor-pointer"
                   >
-                    <TrendingUp className="w-5 h-5 flex-shrink-0" /> Add Income
-                  </button>
-                  <button 
-                    onClick={() => openTransactionForm('expense')}
-                    className="w-full sm:w-auto bg-surface-lighter hover:bg-surface-light border border-surface-lighter text-text px-5 sm:px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 cursor-pointer"
-                  >
-                    <ArrowDownRight className="w-5 h-5 flex-shrink-0" /> Add Expense
+                    <Wallet className="w-5 h-5 flex-shrink-0" /> Add Transaction
                   </button>
                 </motion.div>
               </div>
             </motion.div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-              {quickStats.map((stat) => (
-                <motion.div
-                  key={stat.label}
-                  variants={item}
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  className={`${glassStyle} rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:border-primary/40 group hover:shadow-xl hover:shadow-primary/10 relative overflow-hidden`}
-                >
-                  <div className={`absolute -right-4 -top-4 w-16 h-16 sm:w-24 sm:h-24 ${stat.bg} rounded-full blur-2xl group-hover:blur-3xl transition-all duration-500`} />
-                  <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3 sm:mb-4">
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${stat.bg} border border-white/5 flex items-center justify-center`}>
-                      <stat.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${stat.color} group-hover:scale-110 transition-transform duration-300`} />
-                    </div>
-                    {stat.trend && (
-                      <span className={`text-[10px] sm:text-xs font-bold px-2 py-1 rounded-lg ${stat.color === 'text-success' ? 'bg-success/20 text-success' : 'bg-danger/20 text-danger'}`}>
-                        {stat.trend}
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-[11px] sm:text-sm font-semibold text-text-muted mb-1 line-clamp-1">{stat.label}</p>
-                    <p className="text-xl sm:text-3xl font-black text-text tracking-tight truncate">{stat.value}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+
 
             {/* Placeholder */}
             <motion.div

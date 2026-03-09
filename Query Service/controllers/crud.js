@@ -14,7 +14,7 @@ export const createUser = async (req, res) => {
         }
 
         // Check if user already exists
-        const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
+        const existing = await query(`SELECT id FROM users WHERE email = '${email}'`);
         if (existing.rows.length > 0) {
             return res.status(409).json({ error: 'A user with this email already exists' });
         }
@@ -24,8 +24,7 @@ export const createUser = async (req, res) => {
         const password_hash = await bcrypt.hash(password, salt);
 
         const result = await query(
-            'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email, created_at',
-            [name, email, password_hash]
+            `INSERT INTO users (name, email, password_hash) VALUES ('${name}', '${email}', '${password_hash}') RETURNING id, name, email, created_at`
         );
 
         const user = result.rows[0];
@@ -49,7 +48,7 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ error: 'email and password are required' });
         }
 
-        const result = await query('SELECT * FROM users WHERE email = $1', [email]);
+        const result = await query(`SELECT * FROM users WHERE email = '${email}'`);
         if (result.rows.length === 0) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
@@ -77,11 +76,10 @@ export const loginUser = async (req, res) => {
 // ─── Get current user profile (protected) ──────────────────────────
 export const getUser = async (req, res) => {
     try {
-        const userId = req.user.id; // set by JWT middleware
+        const userId = req.user.id;
 
         const result = await query(
-            'SELECT id, name, email, created_at, updated_at FROM users WHERE id = $1',
-            [userId]
+            `SELECT id, name, email, created_at, updated_at FROM users WHERE id = ${userId}`
         );
 
         if (result.rows.length === 0) {
@@ -105,14 +103,16 @@ export const updateUser = async (req, res) => {
             return res.status(400).json({ error: 'Provide at least name or email to update' });
         }
 
+        const nameValue = name ? `'${name}'` : 'name';
+        const emailValue = email ? `'${email}'` : 'email';
+
         const result = await query(
             `UPDATE users
-             SET name       = COALESCE($1, name),
-                 email      = COALESCE($2, email),
+             SET name = ${nameValue},
+                 email = ${emailValue},
                  updated_at = NOW()
-             WHERE id = $3
-             RETURNING id, name, email, created_at, updated_at`,
-            [name || null, email || null, userId]
+             WHERE id = ${userId}
+             RETURNING id, name, email, created_at, updated_at`
         );
 
         if (result.rows.length === 0) {
@@ -131,7 +131,7 @@ export const deleteUser = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const result = await query('DELETE FROM users WHERE id = $1 RETURNING id', [userId]);
+        const result = await query(`DELETE FROM users WHERE id = ${userId} RETURNING id`);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'User not found' });
