@@ -1,0 +1,358 @@
+{
+  "entries": [
+    "UI\\src\\main.tsx",
+    "Query Service\\index.js",
+    "Alert Service\\index.js"
+  ],
+  "tree": {
+    "UI\\src\\main.tsx": [
+      {
+        "issuer": "UI\\src\\main.tsx",
+        "request": "react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react\\index.js"
+      },
+      {
+        "issuer": "UI\\src\\main.tsx",
+        "request": "react-dom/client",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react-dom\\client.js"
+      },
+      {
+        "issuer": "UI\\src\\main.tsx",
+        "request": "./index.css",
+        "kind": "StaticImport",
+        "id": "UI\\src\\index.css"
+      },
+      {
+        "issuer": "UI\\src\\main.tsx",
+        "request": "./App.tsx",
+        "kind": "StaticImport",
+        "id": "UI\\src\\App.tsx"
+      },
+      {
+        "issuer": "UI\\src\\main.tsx",
+        "request": "./AuthContext.tsx",
+        "kind": "StaticImport",
+        "id": "UI\\src\\AuthContext.tsx"
+      }
+    ],
+    "Query Service\\index.js": [
+      {
+        "issuer": "Query Service\\index.js",
+        "request": "express",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\express\\index.js"
+      },
+      {
+        "issuer": "Query Service\\index.js",
+        "request": "@vendia/serverless-express",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\@vendia\\serverless-express\\src\\index.js"
+      },
+      {
+        "issuer": "Query Service\\index.js",
+        "request": "cors",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\cors\\lib\\index.js"
+      },
+      {
+        "issuer": "Query Service\\index.js",
+        "request": "./routes/authRoute.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\routes\\authRoute.js"
+      },
+      {
+        "issuer": "Query Service\\index.js",
+        "request": "./routes/categoryRoute.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\routes\\categoryRoute.js"
+      },
+      {
+        "issuer": "Query Service\\index.js",
+        "request": "./routes/transactionRoute.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\routes\\transactionRoute.js"
+      }
+    ],
+    "Alert Service\\index.js": [
+      {
+        "issuer": "Alert Service\\index.js",
+        "request": "express",
+        "kind": "StaticImport",
+        "id": "Alert Service\\node_modules\\express\\index.js"
+      },
+      {
+        "issuer": "Alert Service\\index.js",
+        "request": "@vendia/serverless-express",
+        "kind": "StaticImport",
+        "id": "Alert Service\\node_modules\\@vendia\\serverless-express\\src\\index.js"
+      },
+      {
+        "issuer": "Alert Service\\index.js",
+        "request": "cors",
+        "kind": "StaticImport",
+        "id": "Alert Service\\node_modules\\cors\\lib\\index.js"
+      }
+    ],
+    "UI\\node_modules\\react-dom\\client.js": null,
+    "UI\\src\\index.css": [],
+    "UI\\src\\App.tsx": [
+      {
+        "issuer": "UI\\src\\App.tsx",
+        "request": "react-router-dom",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react-router-dom\\dist\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\App.tsx",
+        "request": "./AuthContext",
+        "kind": "StaticImport",
+        "id": "UI\\src\\AuthContext.tsx"
+      },
+      {
+        "issuer": "UI\\src\\App.tsx",
+        "request": "./AuthPage",
+        "kind": "StaticImport",
+        "id": "UI\\src\\AuthPage.tsx"
+      },
+      {
+        "issuer": "UI\\src\\App.tsx",
+        "request": "./Dashboard",
+        "kind": "StaticImport",
+        "id": "UI\\src\\Dashboard.tsx"
+      },
+      {
+        "issuer": "UI\\src\\App.tsx",
+        "request": "./components/ProtectedRoute",
+        "kind": "StaticImport",
+        "id": "UI\\src\\components\\ProtectedRoute.tsx"
+      }
+    ],
+    "UI\\src\\AuthContext.tsx": [
+      {
+        "issuer": "UI\\src\\AuthContext.tsx",
+        "request": "react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react\\index.js"
+      },
+      {
+        "issuer": "UI\\src\\AuthContext.tsx",
+        "request": "axios",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\axios\\index.js"
+      }
+    ],
+    "Query Service\\routes\\authRoute.js": [
+      {
+        "issuer": "Query Service\\routes\\authRoute.js",
+        "request": "express",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\express\\index.js"
+      },
+      {
+        "issuer": "Query Service\\routes\\authRoute.js",
+        "request": "../controllers/crud.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\controllers\\crud.js"
+      },
+      {
+        "issuer": "Query Service\\routes\\authRoute.js",
+        "request": "../middlewares/jwtMiddleware.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\middlewares\\jwtMiddleware.js"
+      }
+    ],
+    "Query Service\\routes\\categoryRoute.js": [
+      {
+        "issuer": "Query Service\\routes\\categoryRoute.js",
+        "request": "express",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\express\\index.js"
+      },
+      {
+        "issuer": "Query Service\\routes\\categoryRoute.js",
+        "request": "../controllers/categoryController.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\controllers\\categoryController.js"
+      },
+      {
+        "issuer": "Query Service\\routes\\categoryRoute.js",
+        "request": "../middlewares/jwtMiddleware.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\middlewares\\jwtMiddleware.js"
+      }
+    ],
+    "Query Service\\routes\\transactionRoute.js": [
+      {
+        "issuer": "Query Service\\routes\\transactionRoute.js",
+        "request": "express",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\express\\index.js"
+      },
+      {
+        "issuer": "Query Service\\routes\\transactionRoute.js",
+        "request": "../controllers/transactionController.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\controllers\\transactionController.js"
+      },
+      {
+        "issuer": "Query Service\\routes\\transactionRoute.js",
+        "request": "../middlewares/jwtMiddleware.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\middlewares\\jwtMiddleware.js"
+      }
+    ],
+    "Query Service\\node_modules\\express\\index.js": null,
+    "UI\\node_modules\\react\\index.js": null,
+    "Query Service\\node_modules\\@vendia\\serverless-express\\src\\index.js": null,
+    "Alert Service\\node_modules\\express\\index.js": null,
+    "Query Service\\node_modules\\cors\\lib\\index.js": null,
+    "Query Service\\controllers\\crud.js": [
+      {
+        "issuer": "Query Service\\controllers\\crud.js",
+        "request": "bcrypt",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\bcrypt\\bcrypt.js"
+      },
+      {
+        "issuer": "Query Service\\controllers\\crud.js",
+        "request": "jsonwebtoken",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\jsonwebtoken\\index.js"
+      },
+      {
+        "issuer": "Query Service\\controllers\\crud.js",
+        "request": "../db.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\db.js"
+      }
+    ],
+    "Query Service\\middlewares\\jwtMiddleware.js": [
+      {
+        "issuer": "Query Service\\middlewares\\jwtMiddleware.js",
+        "request": "jsonwebtoken",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\jsonwebtoken\\index.js"
+      }
+    ],
+    "Query Service\\controllers\\categoryController.js": [
+      {
+        "issuer": "Query Service\\controllers\\categoryController.js",
+        "request": "../db.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\db.js"
+      }
+    ],
+    "Query Service\\controllers\\transactionController.js": [
+      {
+        "issuer": "Query Service\\controllers\\transactionController.js",
+        "request": "../db.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\db.js"
+      }
+    ],
+    "Alert Service\\node_modules\\cors\\lib\\index.js": null,
+    "Alert Service\\node_modules\\@vendia\\serverless-express\\src\\index.js": null,
+    "UI\\src\\AuthPage.tsx": [
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react\\index.js"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "react-router-dom",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react-router-dom\\dist\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "framer-motion",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\framer-motion\\dist\\es\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "./AuthContext",
+        "kind": "StaticImport",
+        "id": "UI\\src\\AuthContext.tsx"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "lucide-react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js"
+      }
+    ],
+    "UI\\src\\Dashboard.tsx": [
+      {
+        "issuer": "UI\\src\\Dashboard.tsx",
+        "request": "react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react\\index.js"
+      },
+      {
+        "issuer": "UI\\src\\Dashboard.tsx",
+        "request": "react-router-dom",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react-router-dom\\dist\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\Dashboard.tsx",
+        "request": "framer-motion",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\framer-motion\\dist\\es\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\Dashboard.tsx",
+        "request": "./AuthContext",
+        "kind": "StaticImport",
+        "id": "UI\\src\\AuthContext.tsx"
+      },
+      {
+        "issuer": "UI\\src\\Dashboard.tsx",
+        "request": "axios",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\axios\\index.js"
+      },
+      {
+        "issuer": "UI\\src\\Dashboard.tsx",
+        "request": "lucide-react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js"
+      }
+    ],
+    "UI\\src\\components\\ProtectedRoute.tsx": [
+      {
+        "issuer": "UI\\src\\components\\ProtectedRoute.tsx",
+        "request": "react-router-dom",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react-router-dom\\dist\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\components\\ProtectedRoute.tsx",
+        "request": "../AuthContext",
+        "kind": "StaticImport",
+        "id": "UI\\src\\AuthContext.tsx"
+      }
+    ],
+    "UI\\node_modules\\axios\\index.js": null,
+    "UI\\node_modules\\react-router-dom\\dist\\index.mjs": null,
+    "Query Service\\db.js": [
+      {
+        "issuer": "Query Service\\db.js",
+        "request": "pg",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\pg\\lib\\index.js"
+      }
+    ],
+    "Query Service\\node_modules\\jsonwebtoken\\index.js": null,
+    "UI\\node_modules\\framer-motion\\dist\\es\\index.mjs": null,
+    "UI\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js": null,
+    "Query Service\\node_modules\\bcrypt\\bcrypt.js": null,
+    "Query Service\\node_modules\\pg\\lib\\index.js": null
+  },
+  "circulars": []
+}

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dependency X-Ray</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #08080f;
+            color: #fff;
+            overflow: hidden;
+            width: 100vw; height: 100vh;
+        }
+
+        svg { width: 100%; height: 100%; display: block; }
+
+        /* Info panel */
+        #info-panel {
+            position: fixed; top: 24px; left: 24px; z-index: 100;
+            background: rgba(12, 12, 22, 0.88); backdrop-filter: blur(24px) saturate(1.8);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;
+            padding: 28px 32px; max-width: 300px;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        #info-panel h1 {
+            font-size: 22px; font-weight: 900; letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #00d4ff, #a855f7);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        #info-panel .subtitle { font-size: 11px; color: #666; line-height: 1.6; margin-bottom: 20px; }
+        .legend { display: flex; flex-direction: column; gap: 10px; }
+        .legend-item { display: flex; align-items: center; gap: 12px; font-size: 12px; color: #aaa; font-weight: 500; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 8px currentColor; }
+
+        /* Node detail */
+        #node-detail {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            z-index: 100; background: rgba(12, 12, 22, 0.92); backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+            padding: 18px 32px; display: none; text-align: center;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+        #node-detail.show { display: block; animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        #node-detail .tag {
+            display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; padding: 3px 12px; border-radius: 20px; margin-bottom: 8px;
+        }
+        #node-detail h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.3px; }
+        #node-detail .meta { font-size: 11px; color: #666; }
+    </style>
+</head>
+<body>
+    <div id="info-panel">
+        <h1>⚡ Dependency X-Ray</h1>
+        <div class="subtitle">Drag nodes · Scroll to zoom · Click to X-Ray connections</div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="color:#00d4ff; background:#00d4ff;"></div>UI / Frontend</div>
+            <div class="legend-item"><div class="legend-dot" style="color:#00e676; background:#00e676;"></div>Query Service</div>
+            <div class="legend-item"><div class="legend-dot" style="color:#ffc107; background:#ffc107;"></div>Alert Service</div>
+            <div class="legend-item"><div class="legend-dot" style="color:#a855f7; background:#a855f7;"></div>Shared / DB</div>
+        </div>
+    </div>
+    <div id="node-detail">
+        <div class="tag" id="nd-tag"></div>
+        <h3 id="nd-name"></h3>
+        <div class="meta" id="nd-meta"></div>
+    </div>
+
+    <svg id="graph"></svg>
+
+    <script>
+    (function() {
+        // ── Data ──
+        const rawTree = {
+          "UI/src/main.tsx": [
+                    "UI/src/index.css",
+                    "UI/src/App.tsx",
+                    "UI/src/AuthContext.tsx"
+          ],
+          "Query Service/index.js": [
+                    "Query Service/routes/authRoute.js",
+                    "Query Service/routes/categoryRoute.js",
+                    "Query Service/routes/transactionRoute.js"
+          ],
+          "Alert Service/index.js": [],
+          "UI/src/index.css": [],
+          "UI/src/App.tsx": [
+                    "UI/src/AuthContext.tsx",
+                    "UI/src/AuthPage.tsx",
+                    "UI/src/Dashboard.tsx",
+                    "UI/src/components/ProtectedRoute.tsx"
+          ],
+          "UI/src/AuthContext.tsx": [],
+          "Query Service/routes/authRoute.js": [
+                    "Query Service/controllers/crud.js",
+                    "Query Service/middlewares/jwtMiddleware.js"
+          ],
+          "Query Service/routes/categoryRoute.js": [
+                    "Query Service/controllers/categoryController.js",
+                    "Query Service/middlewares/jwtMiddleware.js"
+          ],
+          "Query Service/routes/transactionRoute.js": [
+                    "Query Service/controllers/transactionController.js",
+                    "Query Service/middlewares/jwtMiddleware.js"
+          ],
+          "Query Service/controllers/crud.js": [
+                    "Query Service/db.js"
+          ],
+          "Query Service/middlewares/jwtMiddleware.js": [],
+          "Query Service/controllers/categoryController.js": [
+                    "Query Service/db.js"
+          ],
+          "Query Service/controllers/transactionController.js": [
+                    "Query Service/db.js"
+          ],
+          "UI/src/AuthPage.tsx": [
+                    "UI/src/AuthContext.tsx"
+          ],
+          "UI/src/Dashboard.tsx": [
+                    "UI/src/AuthContext.tsx"
+          ],
+          "UI/src/components/ProtectedRoute.tsx": [
+                    "UI/src/AuthContext.tsx"
+          ],
+          "Query Service/db.js": []
+};
+
+        const svcColor = id => {
+            if (id.startsWith('UI/')) return '#00d4ff';
+            if (id.startsWith('Query Service/')) return '#00e676';
+            if (id.startsWith('Alert Service/')) return '#ffc107';
+            return '#a855f7';
+        };
+        const svcLabel = id => {
+            if (id.startsWith('UI/')) return 'UI / Frontend';
+            if (id.startsWith('Query Service/')) return 'Query Service';
+            if (id.startsWith('Alert Service/')) return 'Alert Service';
+            return 'Shared';
+        };
+        const shortName = p => p.split('/').pop();
+
+        // Build nodes & links
+        const nodeSet = new Set();
+        const links = [];
+        Object.entries(rawTree).forEach(([src, tgts]) => {
+            nodeSet.add(src);
+            tgts.forEach(t => { nodeSet.add(t); links.push({ source: src, target: t }); });
+        });
+        const nodes = Array.from(nodeSet).map(id => {
+            const out = rawTree[id] ? rawTree[id].length : 0;
+            const inc = links.filter(l => l.target === id).length;
+            return { id, name: shortName(id), color: svcColor(id), label: svcLabel(id), out, inc, r: 8 + (out + inc) * 2.5 };
+        });
+
+        // ── SVG Setup ──
+        const W = window.innerWidth, H = window.innerHeight;
+        const svg = d3.select('#graph').attr('viewBox', [0, 0, W, H]);
+
+        // Defs: glow filter + arrow markers
+        const defs = svg.append('defs');
+
+        // Glow filter
+        const glow = defs.append('filter').attr('id', 'glow').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+        glow.append('feGaussianBlur').attr('stdDeviation', '6').attr('result', 'blur');
+        glow.append('feComposite').attr('in', 'SourceGraphic').attr('in2', 'blur').attr('operator', 'over');
+
+        // Highlight glow
+        const hlGlow = defs.append('filter').attr('id', 'hlGlow').attr('x', '-80%').attr('y', '-80%').attr('width', '260%').attr('height', '260%');
+        hlGlow.append('feGaussianBlur').attr('stdDeviation', '12').attr('result', 'blur');
+        hlGlow.append('feComposite').attr('in', 'SourceGraphic').attr('in2', 'blur').attr('operator', 'over');
+
+        // Arrow marker
+        defs.append('marker').attr('id', 'arrowhead').attr('viewBox', '0 -5 10 10')
+            .attr('refX', 22).attr('refY', 0).attr('markerWidth', 7).attr('markerHeight', 7)
+            .attr('orient', 'auto')
+            .append('path').attr('d', 'M0,-4L10,0L0,4').attr('fill', 'rgba(255,255,255,0.2)');
+
+        defs.append('marker').attr('id', 'arrowhead-hl').attr('viewBox', '0 -5 10 10')
+            .attr('refX', 22).attr('refY', 0).attr('markerWidth', 8).attr('markerHeight', 8)
+            .attr('orient', 'auto')
+            .append('path').attr('d', 'M0,-4L10,0L0,4').attr('fill', '#00d4ff');
+
+        // Background grid pattern
+        const gridG = svg.append('g').attr('class', 'grid');
+        for (let x = 0; x < W; x += 60) {
+            gridG.append('line').attr('x1', x).attr('y1', 0).attr('x2', x).attr('y2', H)
+                .attr('stroke', 'rgba(255,255,255,0.015)').attr('stroke-width', 1);
+        }
+        for (let y = 0; y < H; y += 60) {
+            gridG.append('line').attr('x1', 0).attr('y1', y).attr('x2', W).attr('y2', y)
+                .attr('stroke', 'rgba(255,255,255,0.015)').attr('stroke-width', 1);
+        }
+
+        // ── Zoom ──
+        const zoomG = svg.append('g');
+        svg.call(d3.zoom().scaleExtent([0.3, 4]).on('zoom', e => zoomG.attr('transform', e.transform)));
+
+        // ── Links ──
+        const linkG = zoomG.append('g');
+        const link = linkG.selectAll('line').data(links).join('line')
+            .attr('stroke', 'rgba(255,255,255,0.08)')
+            .attr('stroke-width', 1.2)
+            .attr('marker-end', 'url(#arrowhead)');
+
+        // ── Animated particles ──
+        const particleG = zoomG.append('g');
+
+        // ── Nodes ──
+        const nodeG = zoomG.append('g');
+        const node = nodeG.selectAll('g').data(nodes).join('g').attr('cursor', 'grab');
+
+        // Outer glow circle
+        node.append('circle')
+            .attr('r', d => d.r + 6)
+            .attr('fill', d => d.color)
+            .attr('opacity', 0.08)
+            .attr('class', 'outer-glow');
+
+        // Pulse ring (animated)
+        node.append('circle')
+            .attr('r', d => d.r)
+            .attr('fill', 'none')
+            .attr('stroke', d => d.color)
+            .attr('stroke-width', 1)
+            .attr('opacity', 0)
+            .attr('class', 'pulse-ring');
+
+        // Main circle
+        node.append('circle')
+            .attr('r', d => d.r)
+            .attr('fill', d => d.color)
+            .attr('opacity', 0.85)
+            .attr('filter', 'url(#glow)')
+            .attr('class', 'main-circle')
+            .style('transition', 'opacity 0.3s ease');
+
+        // Label
+        node.append('text')
+            .text(d => d.name)
+            .attr('dy', d => d.r + 18)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#ccc')
+            .attr('font-size', '12px')
+            .attr('font-weight', '600')
+            .attr('class', 'node-label')
+            .style('pointer-events', 'none')
+            .style('text-shadow', '0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.6)');
+
+        // ── Idle pulse animation ──
+        function pulseAnim() {
+            node.select('.pulse-ring')
+                .attr('r', d => d.r)
+                .attr('opacity', 0.5)
+                .attr('stroke-width', 2)
+                .transition().duration(2000).ease(d3.easeCircleOut)
+                .attr('r', d => d.r + 25)
+                .attr('opacity', 0)
+                .attr('stroke-width', 0.5)
+                .on('end', function(_, i) { if (i === 0) setTimeout(pulseAnim, 500); });
+        }
+        pulseAnim();
+
+        // ── Click interaction ──
+        let selectedNode = null;
+        let particleSession = 0; // unique ID per click to cancel stale particle loops
+        const detailEl = document.getElementById('node-detail');
+
+        node.on('click', function(event, d) {
+            event.stopPropagation();
+
+            // Cancel any running particle loop
+            particleSession++;
+            particleG.selectAll('*').remove();
+
+            if (selectedNode === d) {
+                selectedNode = null;
+                resetHighlight();
+                detailEl.classList.remove('show');
+                return;
+            }
+
+            selectedNode = d;
+            const connectedNodes = new Set([d.id]);
+            const connectedLinks = new Set();
+
+            links.forEach((l, i) => {
+                const sId = typeof l.source === 'object' ? l.source.id : l.source;
+                const tId = typeof l.target === 'object' ? l.target.id : l.target;
+                if (sId === d.id || tId === d.id) {
+                    connectedNodes.add(sId);
+                    connectedNodes.add(tId);
+                    connectedLinks.add(i);
+                }
+            });
+
+            // Dim everything
+            node.select('.main-circle').transition().duration(400)
+                .attr('opacity', n => connectedNodes.has(n.id) ? 1 : 0.08);
+            node.select('.outer-glow').transition().duration(400)
+                .attr('opacity', n => connectedNodes.has(n.id) ? 0.2 : 0.01);
+            node.select('.node-label').transition().duration(400)
+                .attr('fill', n => connectedNodes.has(n.id) ? '#fff' : '#333');
+            node.select('.main-circle')
+                .attr('filter', n => n.id === d.id ? 'url(#hlGlow)' : 'url(#glow)');
+
+            link.transition().duration(400)
+                .attr('stroke', (_, i) => connectedLinks.has(i) ? '#00d4ff' : 'rgba(255,255,255,0.02)')
+                .attr('stroke-width', (_, i) => connectedLinks.has(i) ? 2.5 : 0.5)
+                .attr('marker-end', (_, i) => connectedLinks.has(i) ? 'url(#arrowhead-hl)' : 'url(#arrowhead)');
+
+            // Spawn particles on highlighted links
+            spawnParticles(connectedLinks);
+
+            // Detail panel
+            document.getElementById('nd-tag').textContent = d.label;
+            document.getElementById('nd-tag').style.background = d.color + '18';
+            document.getElementById('nd-tag').style.color = d.color;
+            document.getElementById('nd-name').textContent = d.id;
+            document.getElementById('nd-meta').textContent = `${d.out} outgoing · ${d.inc} incoming dependencies`;
+            detailEl.classList.add('show');
+        });
+
+        svg.on('click', () => {
+            if (selectedNode) {
+                selectedNode = null;
+                particleSession++;
+                resetHighlight();
+                detailEl.classList.remove('show');
+            }
+        });
+
+        function resetHighlight() {
+            node.select('.main-circle').transition().duration(400).attr('opacity', 0.85).attr('filter', 'url(#glow)');
+            node.select('.outer-glow').transition().duration(400).attr('opacity', 0.08);
+            node.select('.node-label').transition().duration(400).attr('fill', '#ccc');
+            link.transition().duration(400)
+                .attr('stroke', 'rgba(255,255,255,0.08)')
+                .attr('stroke-width', 1.2)
+                .attr('marker-end', 'url(#arrowhead)');
+            particleG.selectAll('*').remove();
+        }
+
+        // ── Animated particles along highlighted edges ──
+        function spawnParticles(connectedLinks) {
+            particleG.selectAll('*').remove();
+            const activeLinks = links.filter((_, i) => connectedLinks.has(i));
+            const mySession = particleSession; // capture current session
+
+            function emitWave() {
+                // Stop if session changed (user clicked another node or background)
+                if (mySession !== particleSession) return;
+                activeLinks.forEach(l => {
+                    const sx = l.source.x, sy = l.source.y, tx = l.target.x, ty = l.target.y;
+                    const p = particleG.append('circle')
+                        .attr('r', 3).attr('fill', '#00d4ff').attr('opacity', 0.9)
+                        .attr('cx', sx).attr('cy', sy)
+                        .attr('filter', 'url(#glow)');
+                    p.transition().duration(1200).ease(d3.easeLinear)
+                        .attr('cx', tx).attr('cy', ty).attr('opacity', 0)
+                        .on('end', function() { d3.select(this).remove(); });
+                });
+                setTimeout(emitWave, 800);
+            }
+            emitWave();
+        }
+
+        // ── Drag ──
+        const drag = d3.drag()
+            .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+            .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+            .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; });
+        node.call(drag);
+
+        // ── Simulation ──
+        const sim = d3.forceSimulation(nodes)
+            .force('link', d3.forceLink(links).id(d => d.id).distance(120).strength(0.6))
+            .force('charge', d3.forceManyBody().strength(-500).distanceMax(400))
+            .force('center', d3.forceCenter(W / 2, H / 2))
+            .force('collision', d3.forceCollide().radius(d => d.r + 20))
+            .force('x', d3.forceX(W / 2).strength(0.04))
+            .force('y', d3.forceY(H / 2).strength(0.04))
+            .on('tick', () => {
+                link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+                node.attr('transform', d => `translate(${d.x},${d.y})`);
+            });
+
+        // Entrance animation: fade in after a beat
+        zoomG.attr('opacity', 0).transition().delay(300).duration(800).attr('opacity', 1);
+    })();
+    </script>
+</body>
+</html>

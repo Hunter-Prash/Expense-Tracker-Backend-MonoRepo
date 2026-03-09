@@ -4,3 +4,12 @@
     "password": "Xyko$112"
 }
 
+
+
+
+
+# Step 1: Scan
+npx dpdm ./UI/src/main.tsx ./"Query Service"/index.js ./"Alert Service"/index.js -o dependency-graph.json --transform json
+
+# Step 2: Update the visualizer
+node xray.js
