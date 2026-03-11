@@ -1,4 +1,4 @@
-import { docClient, TABLE_NAME, PutCommand, GetCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { docClient, LIMITS_TABLE, PutCommand, GetCommand, UpdateCommand, DeleteCommand } from '../db.js';
 
 // ─── Set daily limit ─────────────────────────────────────────────
 export const setDailyLimit = async (req, res) => {
@@ -15,8 +15,9 @@ export const setDailyLimit = async (req, res) => {
         }
 
         const result = await docClient.send(new UpdateCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: 'LIMITS' },
+            TableName: LIMITS_TABLE,
+            // Partition Key: user_id
+            Key: { user_id: userId },
             UpdateExpression: 'SET daily_limit = :val, updated_at = :now',
             ExpressionAttributeValues: {
                 ':val': Number(daily_limit),
@@ -47,8 +48,8 @@ export const setWeeklyLimit = async (req, res) => {
         }
 
         const result = await docClient.send(new UpdateCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: 'LIMITS' },
+            TableName: LIMITS_TABLE,
+            Key: { user_id: userId },
             UpdateExpression: 'SET weekly_limit = :val, updated_at = :now',
             ExpressionAttributeValues: {
                 ':val': Number(weekly_limit),
@@ -79,8 +80,8 @@ export const setMonthlyLimit = async (req, res) => {
         }
 
         const result = await docClient.send(new UpdateCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: 'LIMITS' },
+            TableName: LIMITS_TABLE,
+            Key: { user_id: userId },
             UpdateExpression: 'SET monthly_limit = :val, updated_at = :now',
             ExpressionAttributeValues: {
                 ':val': Number(monthly_limit),
@@ -102,8 +103,8 @@ export const getLimits = async (req, res) => {
         const userId = req.user.id;
 
         const result = await docClient.send(new GetCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: 'LIMITS' }
+            TableName: LIMITS_TABLE,
+            Key: { user_id: userId }
         }));
 
         if (!result.Item) {
@@ -123,8 +124,8 @@ export const deleteLimits = async (req, res) => {
         const userId = req.user.id;
 
         const result = await docClient.send(new DeleteCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: 'LIMITS' },
+            TableName: LIMITS_TABLE,
+            Key: { user_id: userId },
             ReturnValues: 'ALL_OLD'
         }));
 

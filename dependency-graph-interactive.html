@@ -90,15 +90,25 @@
                     "Query Service/routes/categoryRoute.js",
                     "Query Service/routes/transactionRoute.js"
           ],
-          "Alert Service/index.js": [],
-          "UI/src/index.css": [],
+          "Alert Service/index.js": [
+                    "Alert Service/routes/limitsRoute.js"
+          ],
           "UI/src/App.tsx": [
                     "UI/src/AuthContext.tsx",
                     "UI/src/AuthPage.tsx",
                     "UI/src/Dashboard.tsx",
                     "UI/src/components/ProtectedRoute.tsx"
           ],
+          "UI/src/index.css": [],
           "UI/src/AuthContext.tsx": [],
+          "Alert Service/routes/limitsRoute.js": [
+                    "Alert Service/controllers/limitsController.js",
+                    "Alert Service/middlewares/jwtMiddleware.js"
+          ],
+          "Query Service/routes/transactionRoute.js": [
+                    "Query Service/controllers/transactionController.js",
+                    "Query Service/middlewares/jwtMiddleware.js"
+          ],
           "Query Service/routes/authRoute.js": [
                     "Query Service/controllers/crud.js",
                     "Query Service/middlewares/jwtMiddleware.js"
@@ -107,18 +117,21 @@
                     "Query Service/controllers/categoryController.js",
                     "Query Service/middlewares/jwtMiddleware.js"
           ],
-          "Query Service/routes/transactionRoute.js": [
-                    "Query Service/controllers/transactionController.js",
-                    "Query Service/middlewares/jwtMiddleware.js"
-          ],
           "Query Service/controllers/crud.js": [
+                    "crypto",
                     "Query Service/db.js"
           ],
           "Query Service/middlewares/jwtMiddleware.js": [],
-          "Query Service/controllers/categoryController.js": [
+          "Alert Service/controllers/limitsController.js": [
+                    "Alert Service/db.js"
+          ],
+          "Alert Service/middlewares/jwtMiddleware.js": [],
+          "Query Service/controllers/transactionController.js": [
+                    "crypto",
                     "Query Service/db.js"
           ],
-          "Query Service/controllers/transactionController.js": [
+          "Query Service/controllers/categoryController.js": [
+                    "crypto",
                     "Query Service/db.js"
           ],
           "UI/src/AuthPage.tsx": [
@@ -130,7 +143,9 @@
           "UI/src/components/ProtectedRoute.tsx": [
                     "UI/src/AuthContext.tsx"
           ],
-          "Query Service/db.js": []
+          "crypto": [],
+          "Query Service/db.js": [],
+          "Alert Service/db.js": []
 };
 
         const svcColor = id => {

@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { docClient, TABLE_NAME, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { docClient, TRANSACTIONS_TABLE, CATEGORIES_TABLE, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
 
 // ─── Create a transaction ─────────────────────────────────────────
 export const createTransaction = async (req, res) => {
@@ -15,15 +15,16 @@ export const createTransaction = async (req, res) => {
             return res.status(400).json({ error: "Type must be either 'income' or 'expense'" });
         }
 
-        // Find or create the category
+        // Find or create the category in Categories table
+        // We query the Categories table to see if a category with this name and type exists for this user
+        // Note: For a robust system, an index on 'name' might be useful, but for this scale, scanning the user's categories is fast enough
         const catResult = await docClient.send(new QueryCommand({
-            TableName: TABLE_NAME,
-            KeyConditionExpression: 'pk = :pk AND begins_with(sk, :prefix)',
+            TableName: CATEGORIES_TABLE,
+            KeyConditionExpression: 'user_id = :userId',
             FilterExpression: '#n = :name AND #t = :type',
             ExpressionAttributeNames: { '#n': 'name', '#t': 'type' },
             ExpressionAttributeValues: {
-                ':pk': `USER#${user_id}`,
-                ':prefix': 'CAT#',
+                ':userId': user_id,
                 ':name': category_name,
                 ':type': type
             }
@@ -35,12 +36,10 @@ export const createTransaction = async (req, res) => {
         } else {
             category_id = crypto.randomUUID();
             await docClient.send(new PutCommand({
-                TableName: TABLE_NAME,
+                TableName: CATEGORIES_TABLE,
                 Item: {
-                    pk: `USER#${user_id}`,
-                    sk: `CAT#${category_id}`,
-                    id: category_id,
                     user_id,
+                    id: category_id,
                     name: category_name,
                     type,
                     created_at: new Date().toISOString()
@@ -48,15 +47,13 @@ export const createTransaction = async (req, res) => {
             }));
         }
 
-        // Create the transaction
+        // Create the transaction in Transactions table
         const txnId = crypto.randomUUID();
         const now = new Date().toISOString();
 
         const item = {
-            pk: `USER#${user_id}`,
-            sk: `TXN#${transaction_date}#${txnId}`,
-            id: txnId,
             user_id,
+            id: txnId,
             category_id,
             category_name,
             amount: Number(amount),
@@ -67,7 +64,7 @@ export const createTransaction = async (req, res) => {
         };
 
         await docClient.send(new PutCommand({
-            TableName: TABLE_NAME,
+            TableName: TRANSACTIONS_TABLE,
             Item: item
         }));
 
@@ -83,14 +80,14 @@ export const getTransactions = async (req, res) => {
     try {
         const user_id = req.user.id;
 
+        // Note: Transactions table has Partition Key = user_id, Sort Key = transaction_date
         const result = await docClient.send(new QueryCommand({
-            TableName: TABLE_NAME,
-            KeyConditionExpression: 'pk = :pk AND begins_with(sk, :prefix)',
+            TableName: TRANSACTIONS_TABLE,
+            KeyConditionExpression: 'user_id = :userId',
             ExpressionAttributeValues: {
-                ':pk': `USER#${user_id}`,
-                ':prefix': 'TXN#'
+                ':userId': user_id
             },
-            ScanIndexForward: false // descending order (newest first)
+            ScanIndexForward: false // descending order (newest date first)
         }));
 
         res.status(200).json(result.Items || []);
@@ -107,15 +104,15 @@ export const updateTransaction = async (req, res) => {
         const user_id = req.user.id;
         const { category_id, amount, transaction_date, description, type } = req.body;
 
-        // First find the transaction by scanning TXN# items
+        // To update, we need both Partition Key (user_id) and Sort Key (transaction_date)
+        // Since we only have 'id' in the path params, we must first find the transaction to get its date
         const findResult = await docClient.send(new QueryCommand({
-            TableName: TABLE_NAME,
-            KeyConditionExpression: 'pk = :pk AND begins_with(sk, :prefix)',
-            FilterExpression: 'id = :id',
+            TableName: TRANSACTIONS_TABLE,
+            IndexName: 'IdIndex',
+            KeyConditionExpression: 'id = :id AND user_id = :userId',
             ExpressionAttributeValues: {
-                ':pk': `USER#${user_id}`,
-                ':prefix': 'TXN#',
-                ':id': id
+                ':id': id,
+                ':userId': user_id
             }
         }));
 
@@ -148,14 +145,14 @@ export const updateTransaction = async (req, res) => {
         }
 
         if (updates.length === 0) {
-            return res.status(400).json({ error: "No fields provided to update" });
+            return res.status(400).json({ error: "No fields provided to update (note: transaction_date cannot be updated once created due to being a sort key)" });
         }
 
         const exprNames = type !== undefined ? { '#t': 'type' } : undefined;
 
         const result = await docClient.send(new UpdateCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: existing.pk, sk: existing.sk },
+            TableName: TRANSACTIONS_TABLE,
+            Key: { user_id, transaction_date: existing.transaction_date },
             UpdateExpression: `SET ${updates.join(', ')}`,
             ExpressionAttributeNames: exprNames,
             ExpressionAttributeValues: exprValues,
@@ -175,15 +172,14 @@ export const deleteTransaction = async (req, res) => {
         const { id } = req.params;
         const user_id = req.user.id;
 
-        // Find the transaction first to get its sort key
+        // Find the transaction first to get its transaction_date (Sort Key)
         const findResult = await docClient.send(new QueryCommand({
-            TableName: TABLE_NAME,
-            KeyConditionExpression: 'pk = :pk AND begins_with(sk, :prefix)',
-            FilterExpression: 'id = :id',
+            TableName: TRANSACTIONS_TABLE,
+            IndexName: 'IdIndex',
+            KeyConditionExpression: 'id = :id AND user_id = :userId',
             ExpressionAttributeValues: {
-                ':pk': `USER#${user_id}`,
-                ':prefix': 'TXN#',
-                ':id': id
+                ':id': id,
+                ':userId': user_id
             }
         }));
 
@@ -194,8 +190,8 @@ export const deleteTransaction = async (req, res) => {
         const txn = findResult.Items[0];
 
         await docClient.send(new DeleteCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: txn.pk, sk: txn.sk }
+            TableName: TRANSACTIONS_TABLE,
+            Key: { user_id, transaction_date: txn.transaction_date }
         }));
 
         res.status(200).json({ message: "Transaction deleted successfully", id });

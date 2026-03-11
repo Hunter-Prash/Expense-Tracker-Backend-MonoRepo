@@ -1,0 +1,219 @@
+{
+    "StackEvents": [
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "e41c3910-1bed-11f1-97ef-0602e446497d",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "ExpenseTracker",
+            "PhysicalResourceId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "ResourceType": "AWS::CloudFormation::Stack",
+            "Timestamp": "2026-03-09T19:26:37.324000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "e39aad00-1bed-11f1-b98c-02adab883235",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "ExpenseTracker",
+            "PhysicalResourceId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "ResourceType": "AWS::CloudFormation::Stack",
+            "Timestamp": "2026-03-09T19:26:36.489000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "AlertServiceFunction-UPDATE_COMPLETE-2026-03-09T19:26:34.777Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "AlertServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunction-lNvEfgfo3Xv2",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:26:34.777000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "ResourceProperties": "{\"Role\":\"arn:aws:iam::345594574524:role/ExpenseTracker-AlertServiceFunctionRole-aJDeXrnpc3lC\",\"Runtime\":\"nodejs20.x\",\"Description\":\"Lambda function for the Alert Service\",\"Timeout\":\"30\",\"Handler\":\"index.handler\",\"Environment\":{\"Variables\":{\"TABLE_NAME\":\"Expense-Tracker-Table\",\"JWT_SECRET\":\"HiiBabe\"}},\"Code\":{\"S3Bucket\":\"aws-sam-cli-managed-default-samclisourcebucket-egwvbgb37k9z\",\"S3Key\":\"ExpenseTracker/4c2ddd51f0f2da085fbbc3ce7fb925cc\"},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "QueryServiceFunction-UPDATE_COMPLETE-2026-03-09T19:26:34.704Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "QueryServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunction-h2vP3dcdotls",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:26:34.704000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "ResourceProperties": "{\"Role\":\"arn:aws:iam::345594574524:role/ExpenseTracker-QueryServiceFunctionRole-XLkIJYwYnpBY\",\"Runtime\":\"nodejs20.x\",\"Description\":\"Lambda function for the Query Service\",\"Timeout\":\"30\",\"Handler\":\"index.handler\",\"Environment\":{\"Variables\":{\"TABLE_NAME\":\"Expense-Tracker-Table\",\"JWT_SECRET\":\"HiiBabe\"}},\"Code\":{\"S3Bucket\":\"aws-sam-cli-managed-default-samclisourcebucket-egwvbgb37k9z\",\"S3Key\":\"ExpenseTracker/2d32bca23595a277bcad7468c6b83c81\"},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "QueryServiceFunction-UPDATE_IN_PROGRESS-2026-03-09T19:26:22.660Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "QueryServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunction-h2vP3dcdotls",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:26:22.660000+00:00",
+            "ResourceStatus": "UPDATE_IN_PROGRESS",
+            "ResourceProperties": "{\"Role\":\"arn:aws:iam::345594574524:role/ExpenseTracker-QueryServiceFunctionRole-XLkIJYwYnpBY\",\"Runtime\":\"nodejs20.x\",\"Description\":\"Lambda function for the Query Service\",\"Timeout\":\"30\",\"Handler\":\"index.handler\",\"Environment\":{\"Variables\":{\"TABLE_NAME\":\"Expense-Tracker-Table\",\"JWT_SECRET\":\"HiiBabe\"}},\"Code\":{\"S3Bucket\":\"aws-sam-cli-managed-default-samclisourcebucket-egwvbgb37k9z\",\"S3Key\":\"ExpenseTracker/2d32bca23595a277bcad7468c6b83c81\"},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "AlertServiceFunction-UPDATE_IN_PROGRESS-2026-03-09T19:26:22.506Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "AlertServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunction-lNvEfgfo3Xv2",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:26:22.506000+00:00",
+            "ResourceStatus": "UPDATE_IN_PROGRESS",
+            "ResourceProperties": "{\"Role\":\"arn:aws:iam::345594574524:role/ExpenseTracker-AlertServiceFunctionRole-aJDeXrnpc3lC\",\"Runtime\":\"nodejs20.x\",\"Description\":\"Lambda function for the Alert Service\",\"Timeout\":\"30\",\"Handler\":\"index.handler\",\"Environment\":{\"Variables\":{\"TABLE_NAME\":\"Expense-Tracker-Table\",\"JWT_SECRET\":\"HiiBabe\"}},\"Code\":{\"S3Bucket\":\"aws-sam-cli-managed-default-samclisourcebucket-egwvbgb37k9z\",\"S3Key\":\"ExpenseTracker/4c2ddd51f0f2da085fbbc3ce7fb925cc\"},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "QueryServiceFunctionRole-UPDATE_COMPLETE-2026-03-09T19:26:20.778Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "QueryServiceFunctionRole",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunctionRole-XLkIJYwYnpBY",
+            "ResourceType": "AWS::IAM::Role",
+            "Timestamp": "2026-03-09T19:26:20.778000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "ResourceProperties": "{\"ManagedPolicyArns\":[\"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole\"],\"Policies\":[{\"PolicyName\":\"QueryServiceFunctionRolePolicy0\",\"PolicyDocument\":{\"Statement\":[{\"Action\":[\"dynamodb:GetItem\",\"dynamodb:DeleteItem\",\"dynamodb:PutItem\",\"dynamodb:Scan\",\"dynamodb:Query\",\"dynamodb:UpdateItem\",\"dynamodb:BatchWriteItem\",\"dynamodb:BatchGetItem\",\"dynamodb:DescribeTable\",\"dynamodb:ConditionCheckItem\"],\"Resource\":[\"arn:aws:dynamodb:ap-south-1:345594574524:table/Expense-Tracker-Table\",\"arn:aws:dynamodb:ap-south-1:345594574524:table/Expense-Tracker-Table/index/*\"],\"Effect\":\"Allow\"}]}}],\"AssumeRolePolicyDocument\":{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"lambda.amazonaws.com\"]}}]},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "AlertServiceFunctionRole-UPDATE_COMPLETE-2026-03-09T19:26:20.685Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "AlertServiceFunctionRole",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunctionRole-aJDeXrnpc3lC",
+            "ResourceType": "AWS::IAM::Role",
+            "Timestamp": "2026-03-09T19:26:20.685000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "ResourceProperties": "{\"ManagedPolicyArns\":[\"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole\"],\"Policies\":[{\"PolicyName\":\"AlertServiceFunctionRolePolicy0\",\"PolicyDocument\":{\"Statement\":[{\"Action\":[\"dynamodb:GetItem\",\"dynamodb:DeleteItem\",\"dynamodb:PutItem\",\"dynamodb:Scan\",\"dynamodb:Query\",\"dynamodb:UpdateItem\",\"dynamodb:BatchWriteItem\",\"dynamodb:BatchGetItem\",\"dynamodb:DescribeTable\",\"dynamodb:ConditionCheckItem\"],\"Resource\":[\"arn:aws:dynamodb:ap-south-1:345594574524:table/Expense-Tracker-Table\",\"arn:aws:dynamodb:ap-south-1:345594574524:table/Expense-Tracker-Table/index/*\"],\"Effect\":\"Allow\"}]}}],\"AssumeRolePolicyDocument\":{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"lambda.amazonaws.com\"]}}]},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "QueryServiceFunctionRole-UPDATE_IN_PROGRESS-2026-03-09T19:26:04.556Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "QueryServiceFunctionRole",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunctionRole-XLkIJYwYnpBY",
+            "ResourceType": "AWS::IAM::Role",
+            "Timestamp": "2026-03-09T19:26:04.556000+00:00",
+            "ResourceStatus": "UPDATE_IN_PROGRESS",
+            "ResourceProperties": "{\"ManagedPolicyArns\":[\"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole\"],\"Policies\":[{\"PolicyName\":\"QueryServiceFunctionRolePolicy0\",\"PolicyDocument\":{\"Statement\":[{\"Action\":[\"dynamodb:GetItem\",\"dynamodb:DeleteItem\",\"dynamodb:PutItem\",\"dynamodb:Scan\",\"dynamodb:Query\",\"dynamodb:UpdateItem\",\"dynamodb:BatchWriteItem\",\"dynamodb:BatchGetItem\",\"dynamodb:DescribeTable\",\"dynamodb:ConditionCheckItem\"],\"Resource\":[\"arn:aws:dynamodb:ap-south-1:345594574524:table/Expense-Tracker-Table\",\"arn:aws:dynamodb:ap-south-1:345594574524:table/Expense-Tracker-Table/index/*\"],\"Effect\":\"Allow\"}]}}],\"AssumeRolePolicyDocument\":{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"lambda.amazonaws.com\"]}}]},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "AlertServiceFunctionRole-UPDATE_IN_PROGRESS-2026-03-09T19:26:04.506Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "AlertServiceFunctionRole",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunctionRole-aJDeXrnpc3lC",
+            "ResourceType": "AWS::IAM::Role",
+            "Timestamp": "2026-03-09T19:26:04.506000+00:00",
+            "ResourceStatus": "UPDATE_IN_PROGRESS",
+            "ResourceProperties": "{\"ManagedPolicyArns\":[\"arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole\"],\"Policies\":[{\"PolicyName\":\"AlertServiceFunctionRolePolicy0\",\"PolicyDocument\":{\"Statement\":[{\"Action\":[\"dynamodb:GetItem\",\"dynamodb:DeleteItem\",\"dynamodb:PutItem\",\"dynamodb:Scan\",\"dynamodb:Query\",\"dynamodb:UpdateItem\",\"dynamodb:BatchWriteItem\",\"dynamodb:BatchGetItem\",\"dynamodb:DescribeTable\",\"dynamodb:ConditionCheckItem\"],\"Resource\":[\"arn:aws:dynamodb:ap-south-1:345594574524:table/Expense-Tracker-Table\",\"arn:aws:dynamodb:ap-south-1:345594574524:table/Expense-Tracker-Table/index/*\"],\"Effect\":\"Allow\"}]}}],\"AssumeRolePolicyDocument\":{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"lambda.amazonaws.com\"]}}]},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "cf3ee240-1bed-11f1-b17c-0a9560db725b",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "ExpenseTracker",
+            "PhysicalResourceId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "ResourceType": "AWS::CloudFormation::Stack",
+            "Timestamp": "2026-03-09T19:26:02.336000+00:00",
+            "ResourceStatus": "UPDATE_IN_PROGRESS",
+            "ResourceStatusReason": "User Initiated"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "a0067130-1bea-11f1-b4e3-062022934d95",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "ExpenseTracker",
+            "PhysicalResourceId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "ResourceType": "AWS::CloudFormation::Stack",
+            "Timestamp": "2026-03-09T19:03:14.604000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "9f886790-1bea-11f1-aed0-02cf7810acb7",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "ExpenseTracker",
+            "PhysicalResourceId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "ResourceType": "AWS::CloudFormation::Stack",
+            "Timestamp": "2026-03-09T19:03:13.795000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "AlertServiceFunction-UPDATE_COMPLETE-2026-03-09T19:03:12.124Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "AlertServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunction-lNvEfgfo3Xv2",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:03:12.124000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "ResourceProperties": "{\"Role\":\"arn:aws:iam::345594574524:role/ExpenseTracker-AlertServiceFunctionRole-aJDeXrnpc3lC\",\"Runtime\":\"nodejs20.x\",\"Description\":\"Lambda function for the Alert Service\",\"Timeout\":\"30\",\"Handler\":\"index.handler\",\"Environment\":{\"Variables\":{\"DB_PORT\":\"5432\",\"JWT_SECRET\":\"HiiBabe\",\"DB_USER\":\"postgres\",\"DB_NAME\":\"Expense-Tracker-DB\",\"DB_HOST\":\"aeronode-rds-server.cf28seae0k2m.ap-south-1.rds.amazonaws.com\",\"DB_PASSWORD\":\"Admin$1234\"}},\"Code\":{\"S3Bucket\":\"aws-sam-cli-managed-default-samclisourcebucket-egwvbgb37k9z\",\"S3Key\":\"ExpenseTracker/0dd90f067fb214497783c43bb1caf314\"},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "QueryServiceFunction-UPDATE_COMPLETE-2026-03-09T19:03:12.099Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "QueryServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunction-h2vP3dcdotls",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:03:12.099000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "ResourceProperties": "{\"Role\":\"arn:aws:iam::345594574524:role/ExpenseTracker-QueryServiceFunctionRole-XLkIJYwYnpBY\",\"Runtime\":\"nodejs20.x\",\"Description\":\"Lambda function for the Query Service\",\"Timeout\":\"30\",\"Handler\":\"index.handler\",\"Environment\":{\"Variables\":{\"DB_PORT\":\"5432\",\"JWT_SECRET\":\"HiiBabe\",\"DB_USER\":\"postgres\",\"DB_NAME\":\"Expense-Tracker-DB\",\"DB_HOST\":\"aeronode-rds-server.cf28seae0k2m.ap-south-1.rds.amazonaws.com\",\"DB_PASSWORD\":\"Admin$1234\"}},\"Code\":{\"S3Bucket\":\"aws-sam-cli-managed-default-samclisourcebucket-egwvbgb37k9z\",\"S3Key\":\"ExpenseTracker/2db7c916ea57b47724a94303db3a8db6\"},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "AlertServiceFunction-UPDATE_IN_PROGRESS-2026-03-09T19:03:05.627Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "AlertServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunction-lNvEfgfo3Xv2",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:03:05.627000+00:00",
+            "ResourceStatus": "UPDATE_IN_PROGRESS",
+            "ResourceProperties": "{\"Role\":\"arn:aws:iam::345594574524:role/ExpenseTracker-AlertServiceFunctionRole-aJDeXrnpc3lC\",\"Runtime\":\"nodejs20.x\",\"Description\":\"Lambda function for the Alert Service\",\"Timeout\":\"30\",\"Handler\":\"index.handler\",\"Environment\":{\"Variables\":{\"DB_PORT\":\"5432\",\"JWT_SECRET\":\"HiiBabe\",\"DB_USER\":\"postgres\",\"DB_NAME\":\"Expense-Tracker-DB\",\"DB_HOST\":\"aeronode-rds-server.cf28seae0k2m.ap-south-1.rds.amazonaws.com\",\"DB_PASSWORD\":\"Admin$1234\"}},\"Code\":{\"S3Bucket\":\"aws-sam-cli-managed-default-samclisourcebucket-egwvbgb37k9z\",\"S3Key\":\"ExpenseTracker/0dd90f067fb214497783c43bb1caf314\"},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "QueryServiceFunction-UPDATE_IN_PROGRESS-2026-03-09T19:03:05.623Z",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "QueryServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunction-h2vP3dcdotls",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:03:05.623000+00:00",
+            "ResourceStatus": "UPDATE_IN_PROGRESS",
+            "ResourceProperties": "{\"Role\":\"arn:aws:iam::345594574524:role/ExpenseTracker-QueryServiceFunctionRole-XLkIJYwYnpBY\",\"Runtime\":\"nodejs20.x\",\"Description\":\"Lambda function for the Query Service\",\"Timeout\":\"30\",\"Handler\":\"index.handler\",\"Environment\":{\"Variables\":{\"DB_PORT\":\"5432\",\"JWT_SECRET\":\"HiiBabe\",\"DB_USER\":\"postgres\",\"DB_NAME\":\"Expense-Tracker-DB\",\"DB_HOST\":\"aeronode-rds-server.cf28seae0k2m.ap-south-1.rds.amazonaws.com\",\"DB_PASSWORD\":\"Admin$1234\"}},\"Code\":{\"S3Bucket\":\"aws-sam-cli-managed-default-samclisourcebucket-egwvbgb37k9z\",\"S3Key\":\"ExpenseTracker/2db7c916ea57b47724a94303db3a8db6\"},\"Tags\":[{\"Value\":\"SAM\",\"Key\":\"lambda:createdBy\"}]}"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "98b3bf50-1bea-11f1-be7c-0aa1eb19524d",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "ExpenseTracker",
+            "PhysicalResourceId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "ResourceType": "AWS::CloudFormation::Stack",
+            "Timestamp": "2026-03-09T19:03:02.336000+00:00",
+            "ResourceStatus": "UPDATE_IN_PROGRESS",
+            "ResourceStatusReason": "User Initiated"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "adc4ab10-1baf-11f1-bdc2-02d45f830723",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "ExpenseTracker",
+            "PhysicalResourceId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "ResourceType": "AWS::CloudFormation::Stack",
+            "Timestamp": "2026-03-09T12:01:17.357000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE"
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "EventId": "ad5e4820-1baf-11f1-a04e-0adba345cbff",
+            "StackName": "ExpenseTracker",
+            "LogicalResourceId": "ExpenseTracker",
+            "PhysicalResourceId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "ResourceType": "AWS::CloudFormation::Stack",
+            "Timestamp": "2026-03-09T12:01:16.701000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS"
+        }
+    ],
+    "NextToken": "eyJOZXh0VG9rZW4iOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAyMH0="
+}

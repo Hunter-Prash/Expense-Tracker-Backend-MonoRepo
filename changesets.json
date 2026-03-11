@@ -1,0 +1,28 @@
+{
+    "Summaries": [
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "StackName": "ExpenseTracker",
+            "ChangeSetId": "arn:aws:cloudformation:ap-south-1:345594574524:changeSet/samcli-deploy1773217453/7d01eb36-a9d9-4078-a0bd-36a5dfa21770",
+            "ChangeSetName": "samcli-deploy1773217453",
+            "ExecutionStatus": "UNAVAILABLE",
+            "Status": "FAILED",
+            "StatusReason": "The following hook(s)/validation failed: [AWS::EarlyValidation::ResourceExistenceCheck]. To troubleshoot Early Validation errors, use the DescribeEvents API for detailed failure information.",
+            "CreationTime": "2026-03-11T08:24:12.655000+00:00",
+            "Description": "Created by SAM CLI at 2026-03-11T08:24:13.677553+00:00 UTC",
+            "IncludeNestedStacks": false
+        },
+        {
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "StackName": "ExpenseTracker",
+            "ChangeSetId": "arn:aws:cloudformation:ap-south-1:345594574524:changeSet/samcli-deploy1773217509/93d87a23-0777-426b-995d-2474bc25b101",
+            "ChangeSetName": "samcli-deploy1773217509",
+            "ExecutionStatus": "UNAVAILABLE",
+            "Status": "FAILED",
+            "StatusReason": "The following hook(s)/validation failed: [AWS::EarlyValidation::ResourceExistenceCheck]. To troubleshoot Early Validation errors, use the DescribeEvents API for detailed failure information.",
+            "CreationTime": "2026-03-11T08:25:08.208000+00:00",
+            "Description": "Created by SAM CLI at 2026-03-11T08:25:09.464021+00:00 UTC",
+            "IncludeNestedStacks": false
+        }
+    ]
+}

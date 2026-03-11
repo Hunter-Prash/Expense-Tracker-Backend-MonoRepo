@@ -6,8 +6,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { LogOut, Wallet, TrendingUp, PieChart, Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Calendar, Tag, FileText, IndianRupee } from 'lucide-react';
 
-const API_BASE = 'https://14ozjattl0.execute-api.ap-south-1.amazonaws.com/Stage/query/api/v1';
-const ALERT_API_BASE = 'https://14ozjattl0.execute-api.ap-south-1.amazonaws.com/Stage/alert/api/v1';
+const API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/query/api/v1';
+const ALERT_API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/alert/api/v1';
 
 const Dashboard = () => {
   const { user, token, logout } = useAuth();

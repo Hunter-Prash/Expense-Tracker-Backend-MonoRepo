@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { docClient, TABLE_NAME, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { docClient, USERS_TABLE, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key';
 
@@ -14,14 +14,13 @@ export const createUser = async (req, res) => {
             return res.status(400).json({ error: 'name, email and password are required' });
         }
 
-        // Check if email already exists via GSI
+        // Check if email already exists using GSI on Users table
         const existing = await docClient.send(new QueryCommand({
-            TableName: TABLE_NAME,
-            IndexName: 'GSI1',
-            KeyConditionExpression: 'gsi1pk = :email AND gsi1sk = :sk',
+            TableName: USERS_TABLE,
+            IndexName: 'EmailIndex',
+            KeyConditionExpression: 'email = :email',
             ExpressionAttributeValues: {
-                ':email': `EMAIL#${email}`,
-                ':sk': 'PROFILE'
+                ':email': email
             }
         }));
 
@@ -36,13 +35,11 @@ export const createUser = async (req, res) => {
         const userId = crypto.randomUUID();
         const now = new Date().toISOString();
 
+        // Save in Users table
+        // Partition Key: id
         await docClient.send(new PutCommand({
-            TableName: TABLE_NAME,
+            TableName: USERS_TABLE,
             Item: {
-                pk: `USER#${userId}`,
-                sk: 'PROFILE',
-                gsi1pk: `EMAIL#${email}`,
-                gsi1sk: 'PROFILE',
                 id: userId,
                 name,
                 email,
@@ -73,24 +70,23 @@ export const loginUser = async (req, res) => {
 
         // Query by email using GSI
         const result = await docClient.send(new QueryCommand({
-            TableName: TABLE_NAME,
-            IndexName: 'GSI1',
-            KeyConditionExpression: 'gsi1pk = :email AND gsi1sk = :sk',
+            TableName: USERS_TABLE,
+            IndexName: 'EmailIndex',
+            KeyConditionExpression: 'email = :email',
             ExpressionAttributeValues: {
-                ':email': `EMAIL#${email}`,
-                ':sk': 'PROFILE'
+                ':email': email
             }
         }));
 
         if (!result.Items || result.Items.length === 0) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Invalid email or password / User not found in DB' });
         }
 
         const user = result.Items[0];
 
         const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Invalid  password' });
         }
 
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
@@ -112,8 +108,8 @@ export const getUser = async (req, res) => {
         const userId = req.user.id;
 
         const result = await docClient.send(new GetCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: 'PROFILE' }
+            TableName: USERS_TABLE,
+            Key: { id: userId }
         }));
 
         if (!result.Item) {
@@ -150,15 +146,12 @@ export const updateUser = async (req, res) => {
         if (email) {
             updates.push('email = :email');
             exprValues[':email'] = email;
-            // Also update the GSI key
-            updates.push('gsi1pk = :gsi1pk');
-            exprValues[':gsi1pk'] = `EMAIL#${email}`;
         }
         updates.push('updated_at = :now');
 
         const result = await docClient.send(new UpdateCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: 'PROFILE' },
+            TableName: USERS_TABLE,
+            Key: { id: userId },
             UpdateExpression: `SET ${updates.join(', ')}`,
             ExpressionAttributeNames: Object.keys(exprNames).length > 0 ? exprNames : undefined,
             ExpressionAttributeValues: exprValues,
@@ -179,8 +172,8 @@ export const deleteUser = async (req, res) => {
         const userId = req.user.id;
 
         const result = await docClient.send(new DeleteCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: 'PROFILE' },
+            TableName: USERS_TABLE,
+            Key: { id: userId },
             ReturnValues: 'ALL_OLD'
         }));
 

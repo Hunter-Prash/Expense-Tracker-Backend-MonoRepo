@@ -1,9 +1,10 @@
 version = 0.1
 
 [default.deploy.parameters]
-stack_name = "ExpenseTracker"
+stack_name = "ExpenseTrackerStack"
 resolve_s3 = true
-s3_prefix = "ExpenseTracker"
+s3_prefix = "ExpenseTrackerStack"
+region = "ap-south-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 disable_rollback = true

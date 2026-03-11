@@ -1,36 +1,42 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Expense Tracker Backend Services
+Description: Expense Tracker Backend
 Globals:
   Function:
     Runtime: nodejs20.x
     Timeout: 30
     Environment:
       Variables:
-        TABLE_NAME: Expense-Tracker-Table
+        USERS_TABLE: Expense-Tracker-User-Table
+        CATEGORIES_TABLE: Expense-Tracker-Categories-Table
+        TRANSACTIONS_TABLE: Expense-Tracker-Transactions-Table
+        LIMITS_TABLE: Expense-Tracker-Limits-Table
         JWT_SECRET: HiiBabe
 Resources:
   ExpenseTrackerApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: ExpenseTrackerApi
+      Name: ExpenseTrackerApiBitch
       StageName: prod
-      Description: Single API Gateway that routes to all backend services
       Cors:
         AllowMethods: '''*'''
-        AllowHeaders: '''Content-Type,Authorization,X-Amz-Date,X-Api-Key'''
+        AllowHeaders: '''Content-Type,Authorization'''
         AllowOrigin: '''*'''
   QueryServiceFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: QueryServiceFunction
       Handler: index.handler
-      Description: Lambda function for the Query Service
+      Description: Handles query operations
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: Expense-Tracker-Table
+          TableName: Expense-Tracker-User-Table
+      - DynamoDBCrudPolicy:
+          TableName: Expense-Tracker-Categories-Table
+      - DynamoDBCrudPolicy:
+          TableName: Expense-Tracker-Transactions-Table
       Events:
-        ApiEvent:
+        QueryAPI:
           Type: Api
           Properties:
             RestApiId:
@@ -44,12 +50,12 @@ Resources:
     Properties:
       CodeUri: AlertServiceFunction
       Handler: index.handler
-      Description: Lambda function for the Alert Service
+      Description: Handles alerts
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: Expense-Tracker-Table
+          TableName: Expense-Tracker-Limits-Table
       Events:
-        ApiEvent:
+        AlertAPI:
           Type: Api
           Properties:
             RestApiId:
@@ -60,6 +66,6 @@ Resources:
       SamResourceId: AlertServiceFunction
 Outputs:
   ApiUrl:
-    Description: Base URL of the Expense Tracker API
+    Description: Base API URL
     Value:
-      Fn::Sub: https://${ExpenseTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/prod
+      Fn::Sub: https://${ExpenseTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/Stage

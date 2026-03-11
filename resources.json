@@ -1,0 +1,112 @@
+{
+    "StackResources": [
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "AlertServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunction-lNvEfgfo3Xv2",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:26:34.777000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "AlertServiceFunctionApiEventPermissionprod",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunctionApiEventPermissionprod-XYPR5KcTvS06",
+            "ResourceType": "AWS::Lambda::Permission",
+            "Timestamp": "2026-03-08T06:54:34.751000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "AlertServiceFunctionRole",
+            "PhysicalResourceId": "ExpenseTracker-AlertServiceFunctionRole-aJDeXrnpc3lC",
+            "ResourceType": "AWS::IAM::Role",
+            "Timestamp": "2026-03-09T19:26:20.685000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "ExpenseTrackerApi",
+            "PhysicalResourceId": "14ozjattl0",
+            "ResourceType": "AWS::ApiGateway::RestApi",
+            "Timestamp": "2026-03-08T06:54:33.445000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "ExpenseTrackerApiDeploymentb926c8653a",
+            "PhysicalResourceId": "imvj2h",
+            "ResourceType": "AWS::ApiGateway::Deployment",
+            "Timestamp": "2026-03-08T06:54:35.023000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "ExpenseTrackerApiprodStage",
+            "PhysicalResourceId": "prod",
+            "ResourceType": "AWS::ApiGateway::Stage",
+            "Timestamp": "2026-03-08T06:54:37.774000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "QueryServiceFunction",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunction-h2vP3dcdotls",
+            "ResourceType": "AWS::Lambda::Function",
+            "Timestamp": "2026-03-09T19:26:34.704000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "QueryServiceFunctionApiEventPermissionprod",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunctionApiEventPermissionprod-IardVCJ8lmiG",
+            "ResourceType": "AWS::Lambda::Permission",
+            "Timestamp": "2026-03-08T06:54:34.868000+00:00",
+            "ResourceStatus": "CREATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        },
+        {
+            "StackName": "ExpenseTracker",
+            "StackId": "arn:aws:cloudformation:ap-south-1:345594574524:stack/ExpenseTracker/93381a10-1abb-11f1-ae12-0a4551fc341f",
+            "LogicalResourceId": "QueryServiceFunctionRole",
+            "PhysicalResourceId": "ExpenseTracker-QueryServiceFunctionRole-XLkIJYwYnpBY",
+            "ResourceType": "AWS::IAM::Role",
+            "Timestamp": "2026-03-09T19:26:20.778000+00:00",
+            "ResourceStatus": "UPDATE_COMPLETE",
+            "DriftInformation": {
+                "StackResourceDriftStatus": "NOT_CHECKED"
+            }
+        }
+    ]
+}

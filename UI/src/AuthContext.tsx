@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import axios from 'axios';
 
-const API_BASE = 'https://14ozjattl0.execute-api.ap-south-1.amazonaws.com/Stage/query/api/v1';
+const API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/query/api/v1';
 
 interface User {
   name: string;

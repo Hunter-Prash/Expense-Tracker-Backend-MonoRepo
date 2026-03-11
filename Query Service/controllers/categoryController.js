@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { docClient, TABLE_NAME, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { docClient, CATEGORIES_TABLE, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
 
 // ─── Create a category ────────────────────────────────────────────
 export const createCategory = async (req, res) => {
@@ -18,18 +18,17 @@ export const createCategory = async (req, res) => {
         const categoryId = crypto.randomUUID();
         const now = new Date().toISOString();
 
+        // Categories Table: Partition Key = user_id, Sort Key = id
         const item = {
-            pk: `USER#${userId}`,
-            sk: `CAT#${categoryId}`,
-            id: categoryId,
             user_id: userId,
+            id: categoryId,
             name,
             type,
             created_at: now
         };
 
         await docClient.send(new PutCommand({
-            TableName: TABLE_NAME,
+            TableName: CATEGORIES_TABLE,
             Item: item
         }));
 
@@ -46,11 +45,10 @@ export const getCategories = async (req, res) => {
         const userId = req.user.id;
 
         const result = await docClient.send(new QueryCommand({
-            TableName: TABLE_NAME,
-            KeyConditionExpression: 'pk = :pk AND begins_with(sk, :prefix)',
+            TableName: CATEGORIES_TABLE,
+            KeyConditionExpression: 'user_id = :userId',
             ExpressionAttributeValues: {
-                ':pk': `USER#${userId}`,
-                ':prefix': 'CAT#'
+                ':userId': userId
             }
         }));
 
@@ -68,8 +66,8 @@ export const getCategoryById = async (req, res) => {
         const { id } = req.params;
 
         const result = await docClient.send(new GetCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: `CAT#${id}` }
+            TableName: CATEGORIES_TABLE,
+            Key: { user_id: userId, id }
         }));
 
         if (!result.Item) {
@@ -114,12 +112,12 @@ export const updateCategory = async (req, res) => {
         }
 
         const result = await docClient.send(new UpdateCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: `CAT#${id}` },
+            TableName: CATEGORIES_TABLE,
+            Key: { user_id: userId, id },
             UpdateExpression: `SET ${updates.join(', ')}`,
             ExpressionAttributeNames: exprNames,
             ExpressionAttributeValues: exprValues,
-            ConditionExpression: 'attribute_exists(pk)',
+            ConditionExpression: 'attribute_exists(id)',
             ReturnValues: 'ALL_NEW'
         }));
 
@@ -140,8 +138,8 @@ export const deleteCategory = async (req, res) => {
         const { id } = req.params;
 
         const result = await docClient.send(new DeleteCommand({
-            TableName: TABLE_NAME,
-            Key: { pk: `USER#${userId}`, sk: `CAT#${id}` },
+            TableName: CATEGORIES_TABLE,
+            Key: { user_id: userId, id },
             ReturnValues: 'ALL_OLD'
         }));
 
