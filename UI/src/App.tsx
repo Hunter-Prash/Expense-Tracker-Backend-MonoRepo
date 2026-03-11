@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import AuthPage from './AuthPage';
 import Dashboard from './Dashboard';
+import Transactions from './Transactions';
+import TransactionsByDate from './TransactionsByDate';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 
@@ -50,6 +52,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute>
+              <Transactions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions/:date"
+          element={
+            <ProtectedRoute>
+              <TransactionsByDate />
             </ProtectedRoute>
           }
         />

@@ -4,11 +4,14 @@ import { docClient, TRANSACTIONS_TABLE, CATEGORIES_TABLE, PutCommand, GetCommand
 // ─── Create a transaction ─────────────────────────────────────────
 export const createTransaction = async (req, res) => {
     try {
-        const { amount, transaction_date, description, type, category_name } = req.body;
+        let { amount, description, type, category_name } = req.body;
         const user_id = req.user.id;
 
-        if (!amount || !transaction_date || !type || !category_name) {
-            return res.status(400).json({ error: "Amount, transaction_date, type, and category_name are required" });
+        // Use full ISO string to ensure uniqueness as Sort Key
+        const transaction_date = new Date().toISOString(); 
+
+        if (!amount || !type || !category_name) {
+            return res.status(400).json({ error: "Amount, type, and category_name are required" });
         }
 
         if (type !== 'income' && type !== 'expense') {
@@ -105,18 +108,17 @@ export const updateTransaction = async (req, res) => {
         const { category_id, amount, transaction_date, description, type } = req.body;
 
         // To update, we need both Partition Key (user_id) and Sort Key (transaction_date)
-        // Since we only have 'id' in the path params, we must first find the transaction to get its date
+        // Since we only have 'id', we query the IdIndex (which only has 'id' as a key)
         const findResult = await docClient.send(new QueryCommand({
             TableName: TRANSACTIONS_TABLE,
             IndexName: 'IdIndex',
-            KeyConditionExpression: 'id = :id AND user_id = :userId',
+            KeyConditionExpression: 'id = :id',
             ExpressionAttributeValues: {
-                ':id': id,
-                ':userId': user_id
+                ':id': id
             }
         }));
 
-        if (!findResult.Items || findResult.Items.length === 0) {
+        if (!findResult.Items || findResult.Items.length === 0 || findResult.Items[0].user_id !== user_id) {
             return res.status(404).json({ error: "Transaction not found or unauthorized" });
         }
 
@@ -173,17 +175,17 @@ export const deleteTransaction = async (req, res) => {
         const user_id = req.user.id;
 
         // Find the transaction first to get its transaction_date (Sort Key)
+        // IdIndex only has 'id' as the key schema, so we query just 'id' and check user_id manually
         const findResult = await docClient.send(new QueryCommand({
             TableName: TRANSACTIONS_TABLE,
             IndexName: 'IdIndex',
-            KeyConditionExpression: 'id = :id AND user_id = :userId',
+            KeyConditionExpression: 'id = :id',
             ExpressionAttributeValues: {
-                ':id': id,
-                ':userId': user_id
+                ':id': id
             }
         }));
 
-        if (!findResult.Items || findResult.Items.length === 0) {
+        if (!findResult.Items || findResult.Items.length === 0 || findResult.Items[0].user_id !== user_id) {
             return res.status(404).json({ error: "Transaction not found or unauthorized" });
         }
 

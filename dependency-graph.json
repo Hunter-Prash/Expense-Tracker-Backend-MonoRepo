@@ -102,6 +102,7 @@
       }
     ],
     "UI\\node_modules\\react-dom\\client.js": null,
+    "UI\\src\\index.css": [],
     "UI\\src\\App.tsx": [
       {
         "issuer": "UI\\src\\App.tsx",
@@ -129,6 +130,18 @@
       },
       {
         "issuer": "UI\\src\\App.tsx",
+        "request": "./Transactions",
+        "kind": "StaticImport",
+        "id": "UI\\src\\Transactions.tsx"
+      },
+      {
+        "issuer": "UI\\src\\App.tsx",
+        "request": "./TransactionsByDate",
+        "kind": "StaticImport",
+        "id": "UI\\src\\TransactionsByDate.tsx"
+      },
+      {
+        "issuer": "UI\\src\\App.tsx",
         "request": "./components/ProtectedRoute",
         "kind": "StaticImport",
         "id": "UI\\src\\components\\ProtectedRoute.tsx"
@@ -140,7 +153,6 @@
         "id": "UI\\node_modules\\react-hot-toast\\dist\\index.js"
       }
     ],
-    "UI\\src\\index.css": [],
     "UI\\src\\AuthContext.tsx": [
       {
         "issuer": "UI\\src\\AuthContext.tsx",
@@ -153,46 +165,6 @@
         "request": "axios",
         "kind": "StaticImport",
         "id": "UI\\node_modules\\axios\\index.js"
-      }
-    ],
-    "Alert Service\\routes\\limitsRoute.js": [
-      {
-        "issuer": "Alert Service\\routes\\limitsRoute.js",
-        "request": "express",
-        "kind": "StaticImport",
-        "id": "Alert Service\\node_modules\\express\\index.js"
-      },
-      {
-        "issuer": "Alert Service\\routes\\limitsRoute.js",
-        "request": "../controllers/limitsController.js",
-        "kind": "StaticImport",
-        "id": "Alert Service\\controllers\\limitsController.js"
-      },
-      {
-        "issuer": "Alert Service\\routes\\limitsRoute.js",
-        "request": "../middlewares/jwtMiddleware.js",
-        "kind": "StaticImport",
-        "id": "Alert Service\\middlewares\\jwtMiddleware.js"
-      }
-    ],
-    "Query Service\\routes\\transactionRoute.js": [
-      {
-        "issuer": "Query Service\\routes\\transactionRoute.js",
-        "request": "express",
-        "kind": "StaticImport",
-        "id": "Query Service\\node_modules\\express\\index.js"
-      },
-      {
-        "issuer": "Query Service\\routes\\transactionRoute.js",
-        "request": "../controllers/transactionController.js",
-        "kind": "StaticImport",
-        "id": "Query Service\\controllers\\transactionController.js"
-      },
-      {
-        "issuer": "Query Service\\routes\\transactionRoute.js",
-        "request": "../middlewares/jwtMiddleware.js",
-        "kind": "StaticImport",
-        "id": "Query Service\\middlewares\\jwtMiddleware.js"
       }
     ],
     "Query Service\\routes\\authRoute.js": [
@@ -235,13 +207,51 @@
         "id": "Query Service\\middlewares\\jwtMiddleware.js"
       }
     ],
-    "Alert Service\\node_modules\\express\\index.js": null,
+    "Query Service\\routes\\transactionRoute.js": [
+      {
+        "issuer": "Query Service\\routes\\transactionRoute.js",
+        "request": "express",
+        "kind": "StaticImport",
+        "id": "Query Service\\node_modules\\express\\index.js"
+      },
+      {
+        "issuer": "Query Service\\routes\\transactionRoute.js",
+        "request": "../controllers/transactionController.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\controllers\\transactionController.js"
+      },
+      {
+        "issuer": "Query Service\\routes\\transactionRoute.js",
+        "request": "../middlewares/jwtMiddleware.js",
+        "kind": "StaticImport",
+        "id": "Query Service\\middlewares\\jwtMiddleware.js"
+      }
+    ],
+    "Alert Service\\routes\\limitsRoute.js": [
+      {
+        "issuer": "Alert Service\\routes\\limitsRoute.js",
+        "request": "express",
+        "kind": "StaticImport",
+        "id": "Alert Service\\node_modules\\express\\index.js"
+      },
+      {
+        "issuer": "Alert Service\\routes\\limitsRoute.js",
+        "request": "../controllers/limitsController.js",
+        "kind": "StaticImport",
+        "id": "Alert Service\\controllers\\limitsController.js"
+      },
+      {
+        "issuer": "Alert Service\\routes\\limitsRoute.js",
+        "request": "../middlewares/jwtMiddleware.js",
+        "kind": "StaticImport",
+        "id": "Alert Service\\middlewares\\jwtMiddleware.js"
+      }
+    ],
     "Query Service\\node_modules\\express\\index.js": null,
-    "Alert Service\\node_modules\\cors\\lib\\index.js": null,
     "UI\\node_modules\\react\\index.js": null,
-    "Alert Service\\node_modules\\@vendia\\serverless-express\\src\\index.js": null,
-    "Query Service\\node_modules\\@vendia\\serverless-express\\src\\index.js": null,
     "Query Service\\node_modules\\cors\\lib\\index.js": null,
+    "Query Service\\node_modules\\@vendia\\serverless-express\\src\\index.js": null,
+    "Alert Service\\node_modules\\express\\index.js": null,
     "Query Service\\controllers\\crud.js": [
       {
         "issuer": "Query Service\\controllers\\crud.js",
@@ -276,20 +286,18 @@
         "id": "Query Service\\node_modules\\jsonwebtoken\\index.js"
       }
     ],
-    "Alert Service\\controllers\\limitsController.js": [
+    "Query Service\\controllers\\categoryController.js": [
       {
-        "issuer": "Alert Service\\controllers\\limitsController.js",
+        "issuer": "Query Service\\controllers\\categoryController.js",
+        "request": "crypto",
+        "kind": "StaticImport",
+        "id": "crypto"
+      },
+      {
+        "issuer": "Query Service\\controllers\\categoryController.js",
         "request": "../db.js",
         "kind": "StaticImport",
-        "id": "Alert Service\\db.js"
-      }
-    ],
-    "Alert Service\\middlewares\\jwtMiddleware.js": [
-      {
-        "issuer": "Alert Service\\middlewares\\jwtMiddleware.js",
-        "request": "jsonwebtoken",
-        "kind": "StaticImport",
-        "id": "Alert Service\\node_modules\\jsonwebtoken\\index.js"
+        "id": "Query Service\\db.js"
       }
     ],
     "Query Service\\controllers\\transactionController.js": [
@@ -306,53 +314,63 @@
         "id": "Query Service\\db.js"
       }
     ],
-    "Query Service\\controllers\\categoryController.js": [
+    "Alert Service\\middlewares\\jwtMiddleware.js": [
       {
-        "issuer": "Query Service\\controllers\\categoryController.js",
-        "request": "crypto",
+        "issuer": "Alert Service\\middlewares\\jwtMiddleware.js",
+        "request": "jsonwebtoken",
         "kind": "StaticImport",
-        "id": "crypto"
-      },
-      {
-        "issuer": "Query Service\\controllers\\categoryController.js",
-        "request": "../db.js",
-        "kind": "StaticImport",
-        "id": "Query Service\\db.js"
+        "id": "Alert Service\\node_modules\\jsonwebtoken\\index.js"
       }
     ],
-    "UI\\src\\AuthPage.tsx": [
+    "Alert Service\\controllers\\limitsController.js": [
       {
-        "issuer": "UI\\src\\AuthPage.tsx",
+        "issuer": "Alert Service\\controllers\\limitsController.js",
+        "request": "../db.js",
+        "kind": "StaticImport",
+        "id": "Alert Service\\db.js"
+      }
+    ],
+    "Alert Service\\node_modules\\@vendia\\serverless-express\\src\\index.js": null,
+    "Alert Service\\node_modules\\cors\\lib\\index.js": null,
+    "UI\\src\\Transactions.tsx": [
+      {
+        "issuer": "UI\\src\\Transactions.tsx",
         "request": "react",
         "kind": "StaticImport",
         "id": "UI\\node_modules\\react\\index.js"
       },
       {
-        "issuer": "UI\\src\\AuthPage.tsx",
+        "issuer": "UI\\src\\Transactions.tsx",
         "request": "react-router-dom",
         "kind": "StaticImport",
         "id": "UI\\node_modules\\react-router-dom\\dist\\index.mjs"
       },
       {
-        "issuer": "UI\\src\\AuthPage.tsx",
+        "issuer": "UI\\src\\Transactions.tsx",
         "request": "framer-motion",
         "kind": "StaticImport",
         "id": "UI\\node_modules\\framer-motion\\dist\\es\\index.mjs"
       },
       {
-        "issuer": "UI\\src\\AuthPage.tsx",
+        "issuer": "UI\\src\\Transactions.tsx",
         "request": "./AuthContext",
         "kind": "StaticImport",
         "id": "UI\\src\\AuthContext.tsx"
       },
       {
-        "issuer": "UI\\src\\AuthPage.tsx",
+        "issuer": "UI\\src\\Transactions.tsx",
+        "request": "axios",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\axios\\index.js"
+      },
+      {
+        "issuer": "UI\\src\\Transactions.tsx",
         "request": "react-hot-toast",
         "kind": "StaticImport",
         "id": "UI\\node_modules\\react-hot-toast\\dist\\index.js"
       },
       {
-        "issuer": "UI\\src\\AuthPage.tsx",
+        "issuer": "UI\\src\\Transactions.tsx",
         "request": "lucide-react",
         "kind": "StaticImport",
         "id": "UI\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js"
@@ -402,6 +420,44 @@
         "id": "UI\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js"
       }
     ],
+    "UI\\src\\AuthPage.tsx": [
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react\\index.js"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "react-router-dom",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react-router-dom\\dist\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "framer-motion",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\framer-motion\\dist\\es\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "./AuthContext",
+        "kind": "StaticImport",
+        "id": "UI\\src\\AuthContext.tsx"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "react-hot-toast",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react-hot-toast\\dist\\index.js"
+      },
+      {
+        "issuer": "UI\\src\\AuthPage.tsx",
+        "request": "lucide-react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js"
+      }
+    ],
     "UI\\src\\components\\ProtectedRoute.tsx": [
       {
         "issuer": "UI\\src\\components\\ProtectedRoute.tsx",
@@ -416,10 +472,30 @@
         "id": "UI\\src\\AuthContext.tsx"
       }
     ],
+    "UI\\src\\TransactionsByDate.tsx": [
+      {
+        "issuer": "UI\\src\\TransactionsByDate.tsx",
+        "request": "react-router-dom",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\react-router-dom\\dist\\index.mjs"
+      },
+      {
+        "issuer": "UI\\src\\TransactionsByDate.tsx",
+        "request": "lucide-react",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js"
+      },
+      {
+        "issuer": "UI\\src\\TransactionsByDate.tsx",
+        "request": "framer-motion",
+        "kind": "StaticImport",
+        "id": "UI\\node_modules\\framer-motion\\dist\\es\\index.mjs"
+      }
+    ],
     "UI\\node_modules\\react-router-dom\\dist\\index.mjs": null,
+    "UI\\node_modules\\axios\\index.js": null,
     "UI\\node_modules\\react-hot-toast\\dist\\index.js": null,
     "crypto": [],
-    "UI\\node_modules\\axios\\index.js": null,
     "Query Service\\db.js": [
       {
         "issuer": "Query Service\\db.js",
@@ -449,12 +525,12 @@
       }
     ],
     "Query Service\\node_modules\\jsonwebtoken\\index.js": null,
-    "Alert Service\\node_modules\\jsonwebtoken\\index.js": null,
     "UI\\node_modules\\framer-motion\\dist\\es\\index.mjs": null,
     "UI\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js": null,
     "Query Service\\node_modules\\bcrypt\\bcrypt.js": null,
-    "Query Service\\node_modules\\@aws-sdk\\client-dynamodb\\dist-es\\index.js": null,
     "Query Service\\node_modules\\@aws-sdk\\lib-dynamodb\\dist-es\\index.js": null,
+    "Query Service\\node_modules\\@aws-sdk\\client-dynamodb\\dist-es\\index.js": null,
+    "Alert Service\\node_modules\\jsonwebtoken\\index.js": null,
     "Alert Service\\node_modules\\@aws-sdk\\client-dynamodb\\dist-es\\index.js": null,
     "Alert Service\\node_modules\\@aws-sdk\\lib-dynamodb\\dist-es\\index.js": null
   },

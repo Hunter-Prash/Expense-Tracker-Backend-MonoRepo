@@ -1,10 +1,10 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { LogOut, Wallet, TrendingUp, PieChart, Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Calendar, Tag, FileText, IndianRupee } from 'lucide-react';
+import { LogOut, Wallet, TrendingUp, PieChart, Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Tag, FileText, IndianRupee, Trash2 } from 'lucide-react';
 
 const API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/query/api/v1';
 const ALERT_API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/alert/api/v1';
@@ -13,6 +13,7 @@ const Dashboard = () => {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
   const [showSettings, setShowSettings] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   // Limit form state
   const [dailyLimit, setDailyLimit] = useState('');
@@ -43,7 +44,6 @@ const Dashboard = () => {
   const [showTransactionForm, setShowTransactionForm] = useState(false);
   const [txnType, setTxnType] = useState<'income' | 'expense'>('expense');
   const [txnAmount, setTxnAmount] = useState('');
-  const [txnDate, setTxnDate] = useState(new Date().toISOString().split('T')[0]);
   const [txnCategory, setTxnCategory] = useState('');
   const [txnDescription, setTxnDescription] = useState('');
   const [txnSubmitting, setTxnSubmitting] = useState(false);
@@ -59,7 +59,6 @@ const Dashboard = () => {
   const openTransactionForm = (type: 'income' | 'expense') => {
     setTxnType(type);
     setTxnAmount('');
-    setTxnDate(new Date().toISOString().split('T')[0]);
     setTxnCategory('');
     setTxnDescription('');
     setTxnError('');
@@ -77,7 +76,6 @@ const Dashboard = () => {
         `${API_BASE}/transactions`,
         {
           amount: parseFloat(txnAmount),
-          transaction_date: txnDate,
           description: txnDescription || null,
           type: txnType,
           category_name: txnCategory,
@@ -362,22 +360,49 @@ const Dashboard = () => {
 
 
 
-            {/* Placeholder */}
+            {/* Link to Transactions Page */}
             <motion.div
               variants={item}
-              className={`${glassStyle} rounded-3xl p-8 sm:p-16 text-center border-dashed border-2 border-surface-lighter/50 hover:border-primary/30 transition-colors mx-auto`}
+              className={`${glassStyle} rounded-3xl p-6 sm:p-10 flex flex-col items-center justify-center text-center`}
             >
-              <motion.div 
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-surface flex items-center justify-center mx-auto mb-5 sm:mb-6 shadow-inner"
-                animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              >
-                <PieChart className="w-8 h-8 sm:w-10 sm:h-10 text-primary/60" />
-              </motion.div>
-              <h3 className="text-lg sm:text-xl font-bold text-text mb-2">No Transactions Yet</h3>
-              <p className="text-sm sm:text-base text-text-muted max-w-md mx-auto leading-relaxed">
-                Your dashboard is looking a bit empty. Start tracking your expenses and income to see beautiful charts and insights appear here.
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+                 <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-text mb-3">View Your Transactions</h3>
+              <p className="text-text-muted mb-8 max-w-md">
+                Manage, update, and track all your daily income and expenses in one dedicated place.
               </p>
+              <div className="flex flex-col gap-6 w-full max-w-md">
+                <button
+                  onClick={() => navigate('/transactions')}
+                  className="w-full bg-surface hover:bg-surface-light text-primary border border-primary/30 hover:border-primary px-8 py-3.5 rounded-xl font-bold flex items-center justify-center gap-3 transition-all shadow-[0_0_20px_rgba(var(--color-primary),0.1)] hover:shadow-[0_0_30px_rgba(var(--color-primary),0.2)] cursor-pointer"
+                >
+                  <span>See Today's Transactions</span>
+                  <ArrowDownRight className="w-5 h-5 -rotate-90" />
+                </button>
+
+                <div className="flex items-center gap-4 w-full">
+                  <div className="flex-1 h-[1px] bg-surface-lighter rounded-full"></div>
+                  <span className="text-xs text-text-muted font-bold tracking-wider">OR PAST RECORD</span>
+                  <div className="flex-1 h-[1px] bg-surface-lighter rounded-full"></div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="w-full sm:w-1/2 bg-surface/50 border border-surface-lighter rounded-xl py-3.5 px-4 text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm sm:text-base [color-scheme:dark]"
+                  />
+                  <button
+                    onClick={() => navigate(`/transactions/${selectedDate}`)}
+                    className="w-full sm:w-1/2 bg-surface hover:bg-surface-light text-primary border border-primary/30 hover:border-primary px-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(var(--color-primary),0.1)] hover:shadow-[0_0_30px_rgba(var(--color-primary),0.2)] cursor-pointer whitespace-nowrap"
+                  >
+                    <span>See Transactions</span>
+                    <ArrowDownRight className="w-5 h-5 -rotate-90" />
+                  </button>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         </main>
@@ -514,17 +539,7 @@ const Dashboard = () => {
                       />
                     </div>
 
-                    {/* Date */}
-                    <div className="relative group">
-                      <Calendar className={iconStyle} />
-                      <input
-                        type="date"
-                        value={txnDate}
-                        onChange={(e) => setTxnDate(e.target.value)}
-                        className={inputStyle}
-                        required
-                      />
-                    </div>
+                    {/* Date Removed: Auto-generated on backend */}
 
                     {/* Description */}
                     <div className="relative group">
