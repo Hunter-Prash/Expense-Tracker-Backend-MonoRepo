@@ -5,6 +5,7 @@ import { useAuth } from './AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { ArrowLeft, TrendingUp, ArrowDownRight, Loader2, PieChart, Trash2, Edit2, X } from 'lucide-react';
+import { getISTDateString } from './utils/istDate';
 
 const API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/query/api/v1';
 
@@ -96,7 +97,7 @@ const Transactions = () => {
         }
     };
 
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getISTDateString();
     const todaysTransactions = transactions.filter(t => t.transaction_date && t.transaction_date.startsWith(todayStr));
 
     const glassStyle = "bg-surface/85 backdrop-blur-2xl border border-primary/25 shadow-[0_8px_32px_rgba(0,0,0,0.4)]";

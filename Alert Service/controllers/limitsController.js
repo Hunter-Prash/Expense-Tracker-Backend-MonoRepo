@@ -1,4 +1,5 @@
 import { docClient, LIMITS_TABLE, PutCommand, GetCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { toISTISOString } from '../utils/time.js';
 
 // ─── Set daily limit ─────────────────────────────────────────────
 export const setDailyLimit = async (req, res) => {
@@ -21,7 +22,7 @@ export const setDailyLimit = async (req, res) => {
             UpdateExpression: 'SET daily_limit = :val, updated_at = :now',
             ExpressionAttributeValues: {
                 ':val': Number(daily_limit),
-                ':now': new Date().toISOString()
+                ':now': toISTISOString()
             },
             ReturnValues: 'ALL_NEW'
         }));
@@ -53,7 +54,7 @@ export const setWeeklyLimit = async (req, res) => {
             UpdateExpression: 'SET weekly_limit = :val, updated_at = :now',
             ExpressionAttributeValues: {
                 ':val': Number(weekly_limit),
-                ':now': new Date().toISOString()
+                ':now': toISTISOString()
             },
             ReturnValues: 'ALL_NEW'
         }));
@@ -85,7 +86,7 @@ export const setMonthlyLimit = async (req, res) => {
             UpdateExpression: 'SET monthly_limit = :val, updated_at = :now',
             ExpressionAttributeValues: {
                 ':val': Number(monthly_limit),
-                ':now': new Date().toISOString()
+                ':now': toISTISOString()
             },
             ReturnValues: 'ALL_NEW'
         }));

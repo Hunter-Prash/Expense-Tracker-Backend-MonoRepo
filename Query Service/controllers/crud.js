@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { docClient, USERS_TABLE, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { toISTISOString } from '../utils/time.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key';
 
@@ -33,7 +34,7 @@ export const createUser = async (req, res) => {
         const password_hash = await bcrypt.hash(password, salt);
 
         const userId = crypto.randomUUID();
-        const now = new Date().toISOString();
+        const now = toISTISOString();
 
         // Save in Users table
         // Partition Key: id
@@ -136,7 +137,7 @@ export const updateUser = async (req, res) => {
 
         const updates = [];
         const exprNames = {};
-        const exprValues = { ':now': new Date().toISOString() };
+        const exprValues = { ':now': toISTISOString() };
 
         if (name) {
             updates.push('#n = :name');

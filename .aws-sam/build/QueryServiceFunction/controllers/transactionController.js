@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { docClient, TRANSACTIONS_TABLE, CATEGORIES_TABLE, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { toISTISOString } from '../utils/time.js';
 
 // ─── Create a transaction ─────────────────────────────────────────
 export const createTransaction = async (req, res) => {
@@ -8,7 +9,7 @@ export const createTransaction = async (req, res) => {
         const user_id = req.user.id;
 
         // Use full ISO string to ensure uniqueness as Sort Key
-        const transaction_date = new Date().toISOString(); 
+        const transaction_date = toISTISOString(); 
 
         if (!amount || !type || !category_name) {
             return res.status(400).json({ error: "Amount, type, and category_name are required" });
@@ -28,7 +29,7 @@ export const createTransaction = async (req, res) => {
             ExpressionAttributeNames: { '#n': 'name', '#t': 'type' },
             ExpressionAttributeValues: {
                 ':userId': user_id,
-                ':name': category_name,
+                ':name': category_name.toLowerCase(),
                 ':type': type
             }
         }));
@@ -43,22 +44,22 @@ export const createTransaction = async (req, res) => {
                 Item: {
                     user_id,
                     id: category_id,
-                    name: category_name,
+                    name: category_name.toLowerCase(),
                     type,
-                    created_at: new Date().toISOString()
+                    created_at: toISTISOString()
                 }
             }));
         }
 
         // Create the transaction in Transactions table
         const txnId = crypto.randomUUID();
-        const now = new Date().toISOString();
+        const now = toISTISOString();
 
         const item = {
             user_id,
             id: txnId,
             category_id,
-            category_name,
+            category_name:category_name.toLowerCase(),
             amount: Number(amount),
             transaction_date,
             description: description || null,

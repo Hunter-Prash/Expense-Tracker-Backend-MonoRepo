@@ -5,6 +5,7 @@ import { useAuth } from './AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { LogOut, Wallet, TrendingUp, PieChart, Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Tag, FileText, IndianRupee, Trash2 } from 'lucide-react';
+import { getISTDateString } from './utils/istDate';
 
 const API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/query/api/v1';
 const ALERT_API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/alert/api/v1';
@@ -13,7 +14,7 @@ const Dashboard = () => {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
   const [showSettings, setShowSettings] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(getISTDateString());
 
   // Limit form state
   const [dailyLimit, setDailyLimit] = useState('');

@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { docClient, CATEGORIES_TABLE, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { toISTISOString } from '../utils/time.js';
 
 // ─── Create a category ────────────────────────────────────────────
 export const createCategory = async (req, res) => {
@@ -16,7 +17,7 @@ export const createCategory = async (req, res) => {
         }
 
         const categoryId = crypto.randomUUID();
-        const now = new Date().toISOString();
+        const now = toISTISOString();
 
         // Categories Table: Partition Key = user_id, Sort Key = id
         const item = {
