@@ -1,6 +1,34 @@
 import crypto from 'crypto';
-import { docClient, TRANSACTIONS_TABLE, CATEGORIES_TABLE, PutCommand, GetCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { docClient, TRANSACTIONS_TABLE, CATEGORIES_TABLE, PutCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
 import { toISTISOString } from '../utils/time.js';
+import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
+
+const eventBridgeClient = new EventBridgeClient({
+    region:'ap-south-1'
+});
+
+const EVENT_BUS_NAME ='expense-alert-bus';
+
+const publishTransactionEvent = async (detailType, detail) => {
+    try {
+        const response = await eventBridgeClient.send(new PutEventsCommand({
+            Entries: [{
+                Source: 'expense-tracker.transactions',
+                DetailType: detailType,
+                EventBusName: EVENT_BUS_NAME,
+                Detail: JSON.stringify(detail),
+                Time: new Date()
+            }]
+        }));
+
+        if (response.FailedEntryCount && response.FailedEntryCount > 0) {
+            console.error(`EventBridge publish failed for ${detailType}`, response.Entries);
+        }
+    } catch (eventError) {
+        // Best effort: transaction persistence succeeded, so we only log publish failures.
+        console.error(`EventBridge error for ${detailType}:`, eventError);
+    }
+};
 
 // ─── Create a transaction ─────────────────────────────────────────
 export const createTransaction = async (req, res) => {
@@ -66,13 +94,20 @@ export const createTransaction = async (req, res) => {
             type,
             created_at: now
         };
-
+         //put in db table
         await docClient.send(new PutCommand({
             TableName: TRANSACTIONS_TABLE,
             Item: item
         }));
 
+        await publishTransactionEvent('TransactionCreated', {
+            user_id,
+            transaction: item,
+            occurred_at: toISTISOString()
+        });
+
         res.status(201).json(item);
+
     } catch (error) {
         console.error("Error creating transaction:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -106,7 +141,7 @@ export const updateTransaction = async (req, res) => {
     try {
         const { id } = req.params;
         const user_id = req.user.id;
-        const { category_id, amount, transaction_date, description, type } = req.body;
+        const { category_id, amount, description, type } = req.body;
 
         // To update, we need both Partition Key (user_id) and Sort Key (transaction_date)
         // Since we only have 'id', we query the IdIndex (which only has 'id' as a key)
@@ -162,6 +197,12 @@ export const updateTransaction = async (req, res) => {
             ReturnValues: 'ALL_NEW'
         }));
 
+        await publishTransactionEvent('TransactionUpdated', {
+            user_id,
+            transaction: result.Attributes,
+            occurred_at: toISTISOString()
+        });
+
         res.status(200).json(result.Attributes);
     } catch (error) {
         console.error("Error updating transaction:", error);
@@ -196,6 +237,12 @@ export const deleteTransaction = async (req, res) => {
             TableName: TRANSACTIONS_TABLE,
             Key: { user_id, transaction_date: txn.transaction_date }
         }));
+
+        await publishTransactionEvent('TransactionDeleted', {
+            user_id,
+            transaction: txn,
+            occurred_at: toISTISOString()
+        });
 
         res.status(200).json({ message: "Transaction deleted successfully", id });
     } catch (error) {

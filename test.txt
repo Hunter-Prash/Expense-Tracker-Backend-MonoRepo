@@ -8,8 +8,41 @@
 
 
 
-# Step 1: Scan
-npx dpdm ./UI/src/main.tsx ./"Query Service"/index.js ./"Alert Service"/index.js -o dependency-graph.json --transform json
+Nice, that’s a strong milestone. Next steps are:
 
-# Step 2: Update the visualizer
-node xray.js
+Wire publisher in Query service
+After successful create/update/delete transaction, call EventBridge PutEvents.
+Use:
+EventBusName: expense-alert-bus
+Source: expense-tracker.transactions
+DetailType: TransactionCreated / TransactionUpdated / TransactionDeleted
+Detail: JSON string with user_id, transaction data, event_id, occurred_at, period_timezone: "Asia/Kolkata".
+
+
+
+Add IAM permission to Query Lambda role
+Allow events:PutEvents on your bus ARN.
+Without this, publish will silently fail with access error.
+
+
+
+Implement consumer in Alert microservice Lambda
+Parse event.detail.
+Recompute totals for day/week/month in IST.
+Compare against user limits.
+Store result in LIMITS_TABLE or a dedicated alerts table.
+
+
+
+Decide frontend read path
+Add API like GET /alert/api/v1/limits/status (or extend existing /limits response) so UI can show exceeded/not-exceeded state.
+Do not wait for EventBridge response directly in UI (it’s async).
+
+
+Add reliability basics now
+Rule target retry enabled.
+Idempotency key handling (event_id) in consumer
+Manually send test event from EventBridge console.
+Verify Alert Lambda CloudWatch logs.
+
+Then create transaction from app/Postman and verify event is emitted and alert status updates.

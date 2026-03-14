@@ -2,6 +2,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Expense Tracker Backend
 
+Parameters:
+  EventBusName:
+    Type: String
+    Default: expense-alert-bus
+    Description: Existing EventBridge bus name used for transaction events
+
 Globals:
   Function:
     Runtime: nodejs20.x
@@ -34,6 +40,9 @@ Resources:
       CodeUri: Query Service/
       Handler: index.handler
       Description: Handles query operations
+      Environment:
+        Variables:
+          EVENT_BUS_NAME: !Ref EventBusName
       Policies:
         - DynamoDBCrudPolicy:
             TableName: Expense-Tracker-User-Table
@@ -41,6 +50,11 @@ Resources:
             TableName: Expense-Tracker-Categories-Table
         - DynamoDBCrudPolicy:
             TableName: Expense-Tracker-Transactions-Table
+        - Statement:
+            Effect: Allow
+            Action:
+              - events:PutEvents
+            Resource: !Sub arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/${EventBusName}
       Events:
         QueryAPI:
           Type: Api
@@ -58,6 +72,12 @@ Resources:
       Description: Handles alerts
       Policies:
         - DynamoDBCrudPolicy:
+            TableName: Expense-Tracker-User-Table
+        - DynamoDBCrudPolicy:
+            TableName: Expense-Tracker-Categories-Table
+        - DynamoDBCrudPolicy:
+            TableName: Expense-Tracker-Transactions-Table
+        - DynamoDBCrudPolicy:
             TableName: Expense-Tracker-Limits-Table
       Events:
         AlertAPI:
@@ -66,10 +86,3 @@ Resources:
             RestApiId: !Ref ExpenseTrackerApi
             Path: /alert/{proxy+}
             Method: ANY
-
-Outputs:
-  ApiUrl:
-    Description: Base API URL
-    Value: !Sub "https://${ExpenseTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/Stage"
-
-
