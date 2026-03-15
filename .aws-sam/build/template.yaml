@@ -85,8 +85,3 @@ Resources:
             Method: ANY
     Metadata:
       SamResourceId: AlertServiceFunction
-Outputs:
-  ApiUrl:
-    Description: Base API URL
-    Value:
-      Fn::Sub: https://${ExpenseTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/Stage

@@ -2,6 +2,7 @@ import express from "express"
 import serverlessExpress from "@vendia/serverless-express"
 import cors from "cors"
 import limitsRoute from './routes/limitsRoute.js'
+import { eventhandler } from './eventHandler.js'
 
 const app = express()
 
@@ -16,4 +17,19 @@ app.get("/health", (req, res) => {
 // routes
 app.use('/api/v1/limits', limitsRoute)
 
-export const handler = serverlessExpress({ app })
+const apiHandler = serverlessExpress({ app })
+
+export const handler = async (event, context) => {
+    const isEventBridgeEvent =
+        event &&
+        typeof event === 'object' &&
+        typeof event.source === 'string' &&
+        typeof event['detail-type'] === 'string' &&
+        event.detail !== undefined;
+
+    if (isEventBridgeEvent) {
+        return eventhandler(event, context);
+    }
+
+    return apiHandler(event, context);
+}

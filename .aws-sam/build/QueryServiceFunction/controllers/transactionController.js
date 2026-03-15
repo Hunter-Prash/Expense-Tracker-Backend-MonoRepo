@@ -4,10 +4,10 @@ import { toISTISOString } from '../utils/time.js';
 import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
 
 const eventBridgeClient = new EventBridgeClient({
-    region:'ap-south-1'
+    region: 'ap-south-1'
 });
 
-const EVENT_BUS_NAME ='expense-alert-bus';
+const EVENT_BUS_NAME = 'expense-alert-bus';
 
 const publishTransactionEvent = async (detailType, detail) => {
     try {
@@ -16,7 +16,7 @@ const publishTransactionEvent = async (detailType, detail) => {
                 Source: 'expense-tracker.transactions',
                 DetailType: detailType,
                 EventBusName: EVENT_BUS_NAME,
-                Detail: JSON.stringify(detail),
+                Detail: JSON.stringify(detail),//actual paylaod
                 Time: new Date()
             }]
         }));
@@ -37,7 +37,7 @@ export const createTransaction = async (req, res) => {
         const user_id = req.user.id;
 
         // Use full ISO string to ensure uniqueness as Sort Key
-        const transaction_date = toISTISOString(); 
+        const transaction_date = toISTISOString();
 
         if (!amount || !type || !category_name) {
             return res.status(400).json({ error: "Amount, type, and category_name are required" });
@@ -87,21 +87,20 @@ export const createTransaction = async (req, res) => {
             user_id,
             id: txnId,
             category_id,
-            category_name:category_name.toLowerCase(),
+            category_name: category_name.toLowerCase(),
             amount: Number(amount),
             transaction_date,
             description: description || null,
             type,
             created_at: now
         };
-         //put in db table
+        //put in db table
         await docClient.send(new PutCommand({
             TableName: TRANSACTIONS_TABLE,
             Item: item
         }));
 
         await publishTransactionEvent('TransactionCreated', {
-            user_id,
             transaction: item,
             occurred_at: toISTISOString()
         });
@@ -198,7 +197,6 @@ export const updateTransaction = async (req, res) => {
         }));
 
         await publishTransactionEvent('TransactionUpdated', {
-            user_id,
             transaction: result.Attributes,
             occurred_at: toISTISOString()
         });
@@ -239,7 +237,6 @@ export const deleteTransaction = async (req, res) => {
         }));
 
         await publishTransactionEvent('TransactionDeleted', {
-            user_id,
             transaction: txn,
             occurred_at: toISTISOString()
         });

@@ -43,21 +43,21 @@ export const eventhandler = async (event) => {
         latestMondayIST.setUTCDate(istNow.getUTCDate() - daysSinceMonday);
         latestMondayIST.setUTCHours(0, 0, 0, 0);
 
-        const currentWeekStart = formatShiftedIST(latestMondayIST);
-        const currentWeekNow = formatShiftedIST(istNow);
+        const weekStart = formatShiftedIST(latestMondayIST);
+        const weekEnd = formatShiftedIST(istNow);
 
-        console.log(`CurrentWeekStart= ${currentWeekStart} , CurrentWeekNow=${currentWeekNow}`)
+        console.log(`WeekStartDate= ${weekStart} ,  Weekend/Current Date=${weekEnd}`)
 
          //get the  all transactions starting from monday to current
     const weeklySum=await docClient.send(new QueryCommand({
         TableName:TRANSACTIONS_TABLE,
-        KeyConditionExpression:'user_id = :user_id AND transaction_date BETWEEN :currentWeekStart AND :currentWeekNow',
+        KeyConditionExpression:'user_id = :user_id AND transaction_date BETWEEN :weekStart AND :weekEnd',
         FilterExpression:'#t = :type',
         ExpressionAttributeNames: { '#t': 'type' },
         ExpressionAttributeValues: {
                 ':user_id': user_id,
-                ':currentWeekStart': currentWeekStart,
-                ':currentWeekNow': currentWeekNow,
+                ':weekStart': weekStart,
+                ':weekEnd': weekEnd,
                 ':type': 'expense'
             }
     }))
@@ -71,36 +71,7 @@ export const eventhandler = async (event) => {
         console.log('-----------Weekly calc ended-----------')
 
 
-    console.log('-----------Monthly calc started-----------')
-    const firstDayOfCurrentMonthIST = new Date(istNow);
-    firstDayOfCurrentMonthIST.setUTCDate(1);
-    firstDayOfCurrentMonthIST.setUTCHours(0, 0, 0, 0);
-
-    const currentMonthStart = formatShiftedIST(firstDayOfCurrentMonthIST);
-    const currentMonthNow = formatShiftedIST(istNow);
-
-    console.log(`CurrentMonthStart= ${currentMonthStart} , CurrentMonthNow=${currentMonthNow}`)
-
-    const monthlySum = await docClient.send(new QueryCommand({
-        TableName: TRANSACTIONS_TABLE,
-        KeyConditionExpression: 'user_id = :user_id AND transaction_date BETWEEN :currentMonthStart AND :currentMonthNow',
-        FilterExpression: '#t = :type',
-        ExpressionAttributeNames: { '#t': 'type' },
-        ExpressionAttributeValues: {
-            ':user_id': user_id,
-            ':currentMonthStart': currentMonthStart,
-            ':currentMonthNow': currentMonthNow,
-            ':type': 'expense'
-        }
-    }))
-
-    const monthlyExpenseTotal = (monthlySum.Items || []).reduce((sum, txn) => sum + Number(txn.amount || 0), 0);
-
-    if (monthlyExpenseTotal > Number(limits.monthly_limit || 0)) {
-        console.log('monthly threshold breach')
-    }
-
-    console.log('-----------Monthly calc ended-----------')
+    //HANDLE MONTHLY SUM ;LATER
 
     return { statusCode: 200, body: JSON.stringify({ message: 'Processed' }) };
 }
