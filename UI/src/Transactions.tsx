@@ -8,6 +8,7 @@ import { ArrowLeft, TrendingUp, ArrowDownRight, Loader2, PieChart, Trash2, Edit2
 import { getISTDateString } from './utils/istDate';
 
 const API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/query/api/v1';
+const ALERT_API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/alert/api/v1';
 
 const Transactions = () => {
     const { token } = useAuth();
@@ -15,6 +16,8 @@ const Transactions = () => {
 
     const [transactions, setTransactions] = useState<any[]>([]);
     const [loadingTxns, setLoadingTxns] = useState(true);
+    const [hasLimitBreach, setHasLimitBreach] = useState(false);
+    const [breachMessage, setBreachMessage] = useState('');
 
     // Update state
     const [updatingTxnId, setUpdatingTxnId] = useState<string | null>(null);
@@ -41,8 +44,34 @@ const Transactions = () => {
         }
     };
 
+    const fetchLimitBreaches = async () => {
+        if (!token) return;
+        try {
+            const res = await axios.get(`${ALERT_API_BASE}/limits`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const limits = res.data?.limits || {};
+            const breachedPeriods = [
+                limits.daily_breached ? 'daily' : null,
+                limits.weekly_breached ? 'weekly' : null,
+                limits.monthly_breached ? 'monthly' : null
+            ].filter(Boolean) as string[];
+
+            if (breachedPeriods.length > 0) {
+                setHasLimitBreach(true);
+                setBreachMessage(`Limit breached for: ${breachedPeriods.join(', ')}`);
+            } else {
+                setHasLimitBreach(false);
+                setBreachMessage('');
+            }
+        } catch (error) {
+            console.error("Failed to fetch limit breach flags", error);
+        }
+    };
+
     useEffect(() => {
         fetchTransactions();
+        fetchLimitBreaches();
     }, [token]);
 
     const handleDeleteTransaction = async (id: string) => {
@@ -52,6 +81,9 @@ const Transactions = () => {
             });
             toast.success('Transaction deleted');
             fetchTransactions();
+            setTimeout(() => {
+                fetchLimitBreaches();
+            }, 10000);
         } catch (error) {
             console.error("Delete failed", error);
             toast.error("Failed to delete the transaction");
@@ -90,6 +122,9 @@ const Transactions = () => {
             toast.success('Transaction updated successfully');
             setUpdatingTxnId(null);
             fetchTransactions();
+            setTimeout(() => {
+                fetchLimitBreaches();
+            }, 10000);
         } catch (err: any) {
             toast.error(err.response?.data?.error || 'Failed to update transaction');
         } finally {
@@ -135,6 +170,11 @@ const Transactions = () => {
                 </header>
 
                 <main className="max-w-4xl mx-auto px-4 py-8">
+                    {hasLimitBreach && (
+                        <div className="rounded-2xl border border-danger/35 bg-danger/12 text-danger px-4 py-3 font-bold text-sm sm:text-base shadow-lg mb-4">
+                            Alert: {breachMessage}
+                        </div>
+                    )}
                     <motion.div variants={container} initial="hidden" animate="show" className={`${glassStyle} rounded-3xl p-6 sm:p-8`}>
 
                         {loadingTxns ? (

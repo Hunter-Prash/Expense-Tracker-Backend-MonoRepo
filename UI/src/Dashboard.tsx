@@ -23,6 +23,46 @@ const Dashboard = () => {
   const [editingDaily, setEditingDaily] = useState(false);
   const [editingWeekly, setEditingWeekly] = useState(false);
   const [editingMonthly, setEditingMonthly] = useState(false);
+  const [hasLimitBreach, setHasLimitBreach] = useState(false);
+  const [breachMessage, setBreachMessage] = useState('');
+  const [currentDailyLimit, setCurrentDailyLimit] = useState<number | null>(null);
+  const [currentWeeklyLimit, setCurrentWeeklyLimit] = useState<number | null>(null);
+  const [currentMonthlyLimit, setCurrentMonthlyLimit] = useState<number | null>(null);
+
+  const fetchLimitBreaches = async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${ALERT_API_BASE}/limits`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const limits = res.data?.limits || {};
+      const dailyBreached = !!limits.daily_breached;
+      const weeklyBreached = !!limits.weekly_breached;
+      const monthlyBreached = !!limits.monthly_breached;
+      setCurrentDailyLimit(limits.daily_limit ?? null);
+      setCurrentWeeklyLimit(limits.weekly_limit ?? null);
+      setCurrentMonthlyLimit(limits.monthly_limit ?? null);
+      const breachedPeriods = [
+        dailyBreached ? 'daily' : null,
+        weeklyBreached ? 'weekly' : null,
+        monthlyBreached ? 'monthly' : null
+      ].filter(Boolean) as string[];
+
+      if (breachedPeriods.length > 0) {
+        setHasLimitBreach(true);
+        setBreachMessage(`Limit breached for: ${breachedPeriods.join(', ')}`);
+      } else {
+        setHasLimitBreach(false);
+        setBreachMessage('');
+      }
+    } catch (err) {
+      console.error('Failed to fetch limit breach flags', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLimitBreaches();
+  }, [token]);
 
   const handleSetLimit = async (type: 'daily' | 'weekly' | 'monthly', value: string) => {
     if (!value || isNaN(Number(value)) || Number(value) < 0) {
@@ -88,6 +128,9 @@ const Dashboard = () => {
 
       setTxnSuccess(true);
       toast.success('Transaction added successfully! 🎉');
+      setTimeout(() => {
+        fetchLimitBreaches();
+      }, 10000);
       setTimeout(() => {
         setShowTransactionForm(false);
         setTxnSuccess(false);
@@ -315,6 +358,14 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+          <div className="rounded-2xl border border-primary/35 bg-primary/10 text-text px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base shadow-lg">
+            Current Limits: Daily - {currentDailyLimit ?? 'Not set'} | Weekly - {currentWeeklyLimit ?? 'Not set'} | Monthly - {currentMonthlyLimit ?? 'Not set'}
+          </div>
+          {hasLimitBreach && (
+            <div className="rounded-2xl border border-danger/35 bg-danger/12 text-danger px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base shadow-lg">
+              Alert: {breachMessage}
+            </div>
+          )}
           <motion.div
             variants={container}
             initial="hidden"
