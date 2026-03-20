@@ -79,6 +79,11 @@ Resources:
             TableName: Expense-Tracker-Transactions-Table
         - DynamoDBCrudPolicy:
             TableName: Expense-Tracker-Limits-Table
+        - Statement:
+            Effect: Allow
+            Action:
+              - sns:Publish
+            Resource: arn:aws:sns:ap-south-1:345594574524:Expense-Breach-Alert
       Events:
         AlertAPI:
           Type: Api
