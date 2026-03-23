@@ -30,6 +30,43 @@ const publishTransactionEvent = async (detailType, detail) => {
     }
 };
 
+
+const formatShiftedIST = (dateObj) => {
+        const pad = (value, length = 2) => String(value).padStart(length, '0');
+        return `${dateObj.getUTCFullYear()}-${pad(dateObj.getUTCMonth() + 1)}-${pad(dateObj.getUTCDate())}T${pad(dateObj.getUTCHours())}:${pad(dateObj.getUTCMinutes())}:${pad(dateObj.getUTCSeconds())}.${pad(dateObj.getUTCMilliseconds(), 3)}+05:30`;
+    };
+
+const getCurrentISTRanges = () => {
+    const now = new Date();
+    const istNow = new Date(now.getTime() + (5.5 * 60 * 60 * 1000));
+
+    const dayStart = new Date(istNow);
+    dayStart.setUTCHours(0, 0, 0, 0);
+
+    const daysSinceMonday = (istNow.getUTCDay() + 6) % 7;
+    const weekStart = new Date(istNow);
+    weekStart.setUTCDate(istNow.getUTCDate() - daysSinceMonday);
+    weekStart.setUTCHours(0, 0, 0, 0);
+
+    const monthStart = new Date(istNow);
+    monthStart.setUTCDate(1);
+    monthStart.setUTCHours(0, 0, 0, 0);
+
+    return {
+        currentDayStart: formatShiftedIST(dayStart),
+        currentWeekStart: formatShiftedIST(weekStart),
+        currentMonthStart: formatShiftedIST(monthStart),
+        currentNow: formatShiftedIST(istNow)
+    };
+};
+
+
+
+
+
+
+
+
 // ─── Create a transaction ─────────────────────────────────────────
 export const createTransaction = async (req, res) => {
     try {
@@ -113,6 +150,16 @@ export const createTransaction = async (req, res) => {
     }
 };
 
+
+
+
+
+
+
+
+
+
+
 // ─── Get all transactions for the logged-in user ─────────────────
 export const getTransactions = async (req, res) => {
     try {
@@ -134,6 +181,131 @@ export const getTransactions = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
+
+
+
+//------get tranactions according to current month --------
+export const getTransactionsByMonth = async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const { currentMonthStart, currentNow } = getCurrentISTRanges();
+
+        const command = new QueryCommand({
+            TableName: TRANSACTIONS_TABLE,
+            KeyConditionExpression: 'user_id = :user_id AND transaction_date BETWEEN :currentMonthStart AND :currentMonthNow',
+            FilterExpression: '#t = :type',
+            ExpressionAttributeNames: { '#t': 'type' },
+            ExpressionAttributeValues: {
+                ':user_id': user_id,
+                ':currentMonthStart': currentMonthStart,
+                ':currentMonthNow': currentNow,
+                ':type': 'expense'
+            }
+        });
+
+        const response = await docClient.send(command);
+        const transactions = response.Items || [];
+
+        const categoryTotalsMap = {};
+        
+
+        for (const txn of transactions) {
+            const category = txn.category_name || 'uncategorized';
+            const amount = Number(txn.amount || 0);
+            categoryTotalsMap[category] = (categoryTotalsMap[category] || 0) + amount;
+        }
+
+        const categoryTotals = Object.entries(categoryTotalsMap).map(([category_name, total_amount]) => ({
+            category_name,
+            total_amount
+        }));
+
+        return res.status(200).json({
+            user_id,
+            month_start: currentMonthStart,
+            month_now: currentNow,
+            category_totals: categoryTotals,
+        });
+    } catch (e) {
+        console.error("Error fetching monthly transactions:", e);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+
+
+
+
+
+//------get spent so far (day/week/month) --------
+export const getSpendSummary = async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const { currentDayStart, currentWeekStart, currentMonthStart, currentNow } = getCurrentISTRanges();
+
+        const [dayResult, weekResult, monthResult] = await Promise.all([
+            docClient.send(new QueryCommand({
+                TableName: TRANSACTIONS_TABLE,
+                KeyConditionExpression: 'user_id = :user_id AND transaction_date BETWEEN :start AND :end',
+                FilterExpression: '#t = :type',
+                ExpressionAttributeNames: { '#t': 'type' },
+                ExpressionAttributeValues: {
+                    ':user_id': user_id,
+                    ':start': currentDayStart,
+                    ':end': currentNow,
+                    ':type': 'expense'
+                }
+            })),
+            docClient.send(new QueryCommand({
+                TableName: TRANSACTIONS_TABLE,
+                KeyConditionExpression: 'user_id = :user_id AND transaction_date BETWEEN :start AND :end',
+                FilterExpression: '#t = :type',
+                ExpressionAttributeNames: { '#t': 'type' },
+                ExpressionAttributeValues: {
+                    ':user_id': user_id,
+                    ':start': currentWeekStart,
+                    ':end': currentNow,
+                    ':type': 'expense'
+                }
+            })),
+            docClient.send(new QueryCommand({
+                TableName: TRANSACTIONS_TABLE,
+                KeyConditionExpression: 'user_id = :user_id AND transaction_date BETWEEN :start AND :end',
+                FilterExpression: '#t = :type',
+                ExpressionAttributeNames: { '#t': 'type' },
+                ExpressionAttributeValues: {
+                    ':user_id': user_id,
+                    ':start': currentMonthStart,
+                    ':end': currentNow,
+                    ':type': 'expense'
+                }
+            }))
+        ]);
+
+        const daily_spent = (dayResult.Items || []).reduce((sum, txn) => sum + Number(txn.amount || 0), 0);
+        const weekly_spent = (weekResult.Items || []).reduce((sum, txn) => sum + Number(txn.amount || 0), 0);
+        const monthly_spent = (monthResult.Items || []).reduce((sum, txn) => sum + Number(txn.amount || 0), 0);
+
+        return res.status(200).json({
+            user_id,
+            daily_spent,
+            weekly_spent,
+            monthly_spent,
+            current_day_start: currentDayStart,
+            current_week_start: currentWeekStart,
+            current_month_start: currentMonthStart,
+            current_now: currentNow
+        });
+    } catch (error) {
+        console.error("Error fetching spend summary:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+
+
 
 // ─── Update a transaction ────────────────────────────────────────
 export const updateTransaction = async (req, res) => {
@@ -207,6 +379,15 @@ export const updateTransaction = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
+
+
+
+
+
+
+
 
 // ─── Delete a transaction ────────────────────────────────────────
 export const deleteTransaction = async (req, res) => {

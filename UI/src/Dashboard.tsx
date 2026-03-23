@@ -28,6 +28,9 @@ const Dashboard = () => {
   const [currentDailyLimit, setCurrentDailyLimit] = useState<number | null>(null);
   const [currentWeeklyLimit, setCurrentWeeklyLimit] = useState<number | null>(null);
   const [currentMonthlyLimit, setCurrentMonthlyLimit] = useState<number | null>(null);
+  const [dailySpent, setDailySpent] = useState(0);
+  const [weeklySpent, setWeeklySpent] = useState(0);
+  const [monthlySpent, setMonthlySpent] = useState(0);
 
   const fetchLimitBreaches = async () => {
     if (!token) return;
@@ -60,8 +63,23 @@ const Dashboard = () => {
     }
   };
 
+  const fetchSpendSummary = async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${API_BASE}/transactions/spend-summary`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDailySpent(Number(res.data?.daily_spent || 0));
+      setWeeklySpent(Number(res.data?.weekly_spent || 0));
+      setMonthlySpent(Number(res.data?.monthly_spent || 0));
+    } catch (err) {
+      console.error('Failed to fetch spend summary', err);
+    }
+  };
+
   useEffect(() => {
     fetchLimitBreaches();
+    fetchSpendSummary();
   }, [token]);
 
   const handleSetLimit = async (type: 'daily' | 'weekly' | 'monthly', value: string) => {
@@ -128,6 +146,7 @@ const Dashboard = () => {
 
       setTxnSuccess(true);
       toast.success('Transaction added successfully! 🎉');
+      fetchSpendSummary();
       setTimeout(() => {
         fetchLimitBreaches();
       }, 10000);
@@ -400,6 +419,20 @@ const Dashboard = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
+                  <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="rounded-xl bg-surface/70 border border-surface-lighter px-4 py-3">
+                      <p className="text-xs uppercase tracking-wide text-text-muted font-bold">Today Spent</p>
+                      <p className="text-lg font-extrabold text-danger mt-1">₹{dailySpent.toFixed(2)}</p>
+                    </div>
+                    <div className="rounded-xl bg-surface/70 border border-surface-lighter px-4 py-3">
+                      <p className="text-xs uppercase tracking-wide text-text-muted font-bold">Week Spent</p>
+                      <p className="text-lg font-extrabold text-danger mt-1">₹{weeklySpent.toFixed(2)}</p>
+                    </div>
+                    <div className="rounded-xl bg-surface/70 border border-surface-lighter px-4 py-3">
+                      <p className="text-xs uppercase tracking-wide text-text-muted font-bold">Month Spent</p>
+                      <p className="text-lg font-extrabold text-danger mt-1">₹{monthlySpent.toFixed(2)}</p>
+                    </div>
+                  </div>
                   <button 
                     onClick={() => openTransactionForm('expense')}
                     className="w-full sm:w-auto bg-primary hover:bg-primary-light text-white px-5 sm:px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 cursor-pointer"

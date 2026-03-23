@@ -133,6 +133,8 @@ const Transactions = () => {
     };
 
     const todayStr = getISTDateString();
+    
+    //GET ALL TRANACRTIONS IRRESPECTIVE OF THE DATE FROM BACKEND AND FILTER IN FRONTEND
     const todaysTransactions = transactions.filter(t => t.transaction_date && t.transaction_date.startsWith(todayStr));
 
     const glassStyle = "bg-surface/85 backdrop-blur-2xl border border-primary/25 shadow-[0_8px_32px_rgba(0,0,0,0.4)]";
