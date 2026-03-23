@@ -4,7 +4,7 @@ import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { LogOut, Wallet, TrendingUp, PieChart, Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Tag, FileText, IndianRupee, Trash2 } from 'lucide-react';
+import { LogOut, Wallet, TrendingUp,Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Tag, FileText, IndianRupee } from 'lucide-react';
 import { getISTDateString } from './utils/istDate';
 
 const API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/query/api/v1';
