@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { docClient, TRANSACTIONS_TABLE, CATEGORIES_TABLE, PutCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
+import { docClient, TRANSACTIONS_TABLE, PutCommand, QueryCommand, UpdateCommand, DeleteCommand } from '../db.js';
 import { toISTISOString } from '../utils/time.js';
 import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
 
@@ -84,38 +84,6 @@ export const createTransaction = async (req, res) => {
             return res.status(400).json({ error: "Type must be either 'income' or 'expense'" });
         }
 
-        // Find or create the category in Categories table
-        // We query the Categories table to see if a category with this name and type exists for this user
-        // Note: For a robust system, an index on 'name' might be useful, but for this scale, scanning the user's categories is fast enough
-        const catResult = await docClient.send(new QueryCommand({
-            TableName: CATEGORIES_TABLE,
-            KeyConditionExpression: 'user_id = :userId',
-            FilterExpression: '#n = :name AND #t = :type',
-            ExpressionAttributeNames: { '#n': 'name', '#t': 'type' },
-            ExpressionAttributeValues: {
-                ':userId': user_id,
-                ':name': category_name.toLowerCase(),
-                ':type': type
-            }
-        }));
-
-        let category_id;
-        if (catResult.Items && catResult.Items.length > 0) {
-            category_id = catResult.Items[0].id;
-        } else {
-            category_id = crypto.randomUUID();
-            await docClient.send(new PutCommand({
-                TableName: CATEGORIES_TABLE,
-                Item: {
-                    user_id,
-                    id: category_id,
-                    name: category_name.toLowerCase(),
-                    type,
-                    created_at: toISTISOString()
-                }
-            }));
-        }
-
         // Create the transaction in Transactions table
         const txnId = crypto.randomUUID();
         const now = toISTISOString();
@@ -123,7 +91,6 @@ export const createTransaction = async (req, res) => {
         const item = {
             user_id,
             id: txnId,
-            category_id,
             category_name: category_name.toLowerCase(),
             amount: Number(amount),
             transaction_date,
@@ -312,7 +279,7 @@ export const updateTransaction = async (req, res) => {
     try {
         const { id } = req.params;
         const user_id = req.user.id;
-        const { category_id, amount, description, type } = req.body;
+        const { category_name, amount, description, type } = req.body;
 
         // To update, we need both Partition Key (user_id) and Sort Key (transaction_date)
         // Since we only have 'id', we query the IdIndex (which only has 'id' as a key)
@@ -332,10 +299,11 @@ export const updateTransaction = async (req, res) => {
         const existing = findResult.Items[0];
         const updates = [];
         const exprValues = {};
+        const exprNames = {};
 
-        if (category_id !== undefined) {
-            updates.push('category_id = :cat');
-            exprValues[':cat'] = category_id;
+        if (category_name !== undefined) {
+            updates.push('category_name = :category_name');
+            exprValues[':category_name'] = String(category_name).toLowerCase();
         }
         if (amount !== undefined) {
             updates.push('amount = :amt');
@@ -351,19 +319,18 @@ export const updateTransaction = async (req, res) => {
             }
             updates.push('#t = :type');
             exprValues[':type'] = type;
+            exprNames['#t'] = 'type';
         }
 
         if (updates.length === 0) {
             return res.status(400).json({ error: "No fields provided to update (note: transaction_date cannot be updated once created due to being a sort key)" });
         }
 
-        const exprNames = type !== undefined ? { '#t': 'type' } : undefined;
-
         const result = await docClient.send(new UpdateCommand({
             TableName: TRANSACTIONS_TABLE,
             Key: { user_id, transaction_date: existing.transaction_date },
             UpdateExpression: `SET ${updates.join(', ')}`,
-            ExpressionAttributeNames: exprNames,
+            ExpressionAttributeNames: Object.keys(exprNames).length > 0 ? exprNames : undefined,
             ExpressionAttributeValues: exprValues,
             ReturnValues: 'ALL_NEW'
         }));

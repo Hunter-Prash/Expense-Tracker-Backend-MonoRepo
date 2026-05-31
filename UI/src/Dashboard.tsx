@@ -614,17 +614,23 @@ const Dashboard = () => {
                     {/* Category */}
                     <div className="relative group">
                       <Tag className={iconStyle} />
-                      <input
-                        type="text"
-                        placeholder="Category (e.g. Shopping, Salary)"
+                      <select
                         value={txnCategory}
                         onChange={(e) => setTxnCategory(e.target.value)}
-                        className={inputStyle}
+                        className={`${inputStyle} appearance-none`}
                         required
-                      />
+                      >
+                        <option value="" disabled>
+                          Select a category
+                        </option>
+                        <option value="Essentials">Essentials</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Career">Career</option>
+                        <option value="Income">Income</option>
+                      </select>
                     </div>
 
-                    {/* Date Removed: Auto-generated on backend */}
 
                     {/* Description */}
                     <div className="relative group">

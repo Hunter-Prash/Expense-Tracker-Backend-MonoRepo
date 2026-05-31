@@ -6,14 +6,12 @@ const docClient = DynamoDBDocumentClient.from(client);
 
 // Multi-table names
 const USERS_TABLE = process.env.USERS_TABLE || 'Users';
-const CATEGORIES_TABLE = process.env.CATEGORIES_TABLE || 'Categories';
 const TRANSACTIONS_TABLE = process.env.TRANSACTIONS_TABLE || 'Transactions';
 const LIMITS_TABLE = process.env.LIMITS_TABLE || 'Limits';
 
 export { 
     docClient, 
     USERS_TABLE, 
-    CATEGORIES_TABLE, 
     TRANSACTIONS_TABLE, 
     LIMITS_TABLE, 
     PutCommand, 

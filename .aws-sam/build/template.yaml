@@ -13,7 +13,6 @@ Globals:
     Environment:
       Variables:
         USERS_TABLE: Expense-Tracker-User-Table
-        CATEGORIES_TABLE: Expense-Tracker-Categories-Table
         TRANSACTIONS_TABLE: Expense-Tracker-Transactions-Table
         LIMITS_TABLE: Expense-Tracker-Limits-Table
         JWT_SECRET: HiiBabe
@@ -41,8 +40,6 @@ Resources:
       - DynamoDBCrudPolicy:
           TableName: Expense-Tracker-User-Table
       - DynamoDBCrudPolicy:
-          TableName: Expense-Tracker-Categories-Table
-      - DynamoDBCrudPolicy:
           TableName: Expense-Tracker-Transactions-Table
       - Statement:
           Effect: Allow
@@ -69,8 +66,6 @@ Resources:
       Policies:
       - DynamoDBCrudPolicy:
           TableName: Expense-Tracker-User-Table
-      - DynamoDBCrudPolicy:
-          TableName: Expense-Tracker-Categories-Table
       - DynamoDBCrudPolicy:
           TableName: Expense-Tracker-Transactions-Table
       - DynamoDBCrudPolicy:
