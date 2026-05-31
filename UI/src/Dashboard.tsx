@@ -4,7 +4,7 @@ import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { LogOut, Wallet, TrendingUp,Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Tag, FileText, IndianRupee } from 'lucide-react';
+import { LogOut, Wallet, TrendingUp,Bell, ArrowDownRight, Settings, X, Loader2, CheckCircle, Tag, FileText, IndianRupee, BriefcaseBusiness } from 'lucide-react';
 import { getISTDateString } from './utils/istDate';
 
 const API_BASE = 'https://0ao6yod173.execute-api.ap-south-1.amazonaws.com/prod/query/api/v1';
@@ -215,6 +215,16 @@ const Dashboard = () => {
             </motion.div>
             
             <div className="flex items-center gap-2 sm:gap-4 relative">
+              <motion.button
+                whileHover={{ scale: 1.03, y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => navigate('/work-tracker')}
+                className="flex items-center gap-2 bg-primary/15 hover:bg-primary/25 border border-primary/30 text-primary-light px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-lg shadow-primary/10"
+              >
+                <BriefcaseBusiness className="w-4 h-4" />
+                <span>Work Tracker</span>
+              </motion.button>
+
               <motion.button
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}

@@ -4,6 +4,7 @@ import AuthPage from './AuthPage';
 import Dashboard from './Dashboard';
 import Transactions from './Transactions';
 import TransactionsByDate from './TransactionsByDate';
+import WorkTracker from './WorkTracker';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 
@@ -68,6 +69,14 @@ function App() {
           element={
             <ProtectedRoute>
               <TransactionsByDate />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/work-tracker"
+          element={
+            <ProtectedRoute>
+              <WorkTracker />
             </ProtectedRoute>
           }
         />
